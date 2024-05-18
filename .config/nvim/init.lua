@@ -2,6 +2,8 @@
 -- [[ General ]]
 --
 
+vim.o.termguicolors = true
+
 -- Set <space> as the leader key
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
@@ -62,10 +64,10 @@ vim.keymap.set("n", "<up>", '<cmd>echo "Use k to move!"<CR>')
 vim.keymap.set("n", "<down>", '<cmd>echo "Use j to move!"<CR>')
 
 -- Making split navigation less painful
-vim.keymap.set("n", "<C-h>", "<C-w><C-h>", {})
-vim.keymap.set("n", "<C-l>", "<C-w><C-l>", {})
-vim.keymap.set("n", "<C-j>", "<C-w><C-j>", {})
-vim.keymap.set("n", "<C-k>", "<C-w><C-k>", {})
+-- vim.keymap.set("n", "<C-h>", "<C-w><C-h>", {})
+-- vim.keymap.set("n", "<C-l>", "<C-w><C-l>", {})
+-- vim.keymap.set("n", "<C-j>", "<C-w><C-j>", {})
+-- vim.keymap.set("n", "<C-k>", "<C-w><C-k>", {})
 
 --
 -- [[ Basic Autocommands ]]
@@ -757,6 +759,11 @@ require("lazy").setup({
 	--  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
 	--    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
 	-- { import = 'custom.plugins' },
+	--
+	{
+		"christoomey/vim-tmux-navigator",
+		lazy = false,
+	},
 }, {
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
