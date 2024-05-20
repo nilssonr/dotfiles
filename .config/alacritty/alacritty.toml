@@ -3,7 +3,7 @@ term = "xterm-256color"
 live_config_reload = "true"
 
 [window]
-decorations = "none"
+decorations = "Buttonless"
 dynamic_padding = true
 opacity = 0.98
 
