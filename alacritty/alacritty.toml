@@ -1,0 +1,33 @@
+import = ["~/.config/alacritty/github-dark-dimmed.toml"]
+
+[env]
+term = "xterm-256color"
+live_config_reload = "true"
+
+[window]
+decorations = "Buttonless"
+dynamic_padding = true
+opacity = 0.95
+
+[window.dimensions]
+columns = 0
+lines = 0
+
+[window.padding]
+x = 8
+y = 8
+
+[font]
+size = 12.5
+
+[font.normal]
+style = "Regular"
+family = "JetBrainsMono Nerd Font"
+
+[scrolling]
+history = 10000
+
+[keyboard]
+bindings = [
+	{ key = 'PageUp', mods = 'Shift', action = "ScrollPageUp"}
+]
