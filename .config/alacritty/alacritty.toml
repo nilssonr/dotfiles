@@ -23,7 +23,8 @@ size = 13
 [font.normal]
 style = "Regular"
 # family = "JetBrainsMono Nerd Font"
-family = "MesloLGSDZ Nerd Font"
+#family = "MesloLGSDZ Nerd Font"
+family = "Inconsolata Nerd Font"
 
 [scrolling]
 history = 10000
