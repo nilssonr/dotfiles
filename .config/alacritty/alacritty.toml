@@ -1,3 +1,4 @@
+[general]
 import = ["~/.config/alacritty/github-dark-dimmed.toml"]
 
 [env]
