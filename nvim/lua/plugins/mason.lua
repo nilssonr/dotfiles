@@ -26,7 +26,8 @@ return {
         "gopls",
         "ts_ls",
         "rust_analyzer",
-        "angularls"
+        "angularls",
+        "html"
       },
       automatic_installation = false,
     },
