@@ -1,0 +1,37 @@
+[general]
+import = ["~/.config/alacritty/github-dark-dimmed.toml"]
+
+[env]
+term = "xterm-256color"
+live_config_reload = "true"
+
+[window]
+decorations = "Buttonless"
+dynamic_padding = false
+opacity = 0.8
+blur = true
+
+[window.dimensions]
+columns = 0
+lines = 0
+
+[window.padding]
+x = 4 
+y = 4 
+
+[font]
+size = 15
+
+[font.normal]
+style = "Regular"
+# family = "JetBrainsMono Nerd Font"
+#family = "MesloLGSDZ Nerd Font"
+family = "Inconsolata Nerd Font"
+
+[scrolling]
+history = 10000
+
+[keyboard]
+bindings = [
+	{ key = 'PageUp', mods = 'Shift', action = "ScrollPageUp"}
+]
