@@ -25,7 +25,8 @@ return {
         "lua_ls",
         "gopls",
         "ts_ls",
-        "rust_analyzer"
+        "rust_analyzer",
+        "angularls"
       },
       automatic_installation = false,
     },

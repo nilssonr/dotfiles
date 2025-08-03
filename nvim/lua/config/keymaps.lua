@@ -36,3 +36,6 @@ map("n", "<leader>nt", "<cmd>Neorg journal today<cr>", { desc = "Neorg Journal T
 map("n", "<leader>nT", "<cmd>Neorg journal tomorrow<cr>", { desc = "Neorg Journal Tomorrow" })
 map("n", "<leader>ny", "<cmd>Neorg journal yesterday<cr>", { desc = "Neorg Journal Yesterday" })
 map("n", "<leader>ni", "<cmd>Neorg journal toc open<cr>", { desc = "Neorg Journal Index" })
+
+-- File tree
+map("n", "<leader>ft", "<cmd>NvimTreeToggle<cr>", { desc = "Nvim tree toggle" })
