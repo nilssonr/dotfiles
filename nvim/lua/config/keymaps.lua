@@ -39,3 +39,38 @@ map("n", "<leader>ni", "<cmd>Neorg journal toc open<cr>", { desc = "Neorg Journa
 
 -- File tree
 map("n", "<leader>fb", "<cmd>NvimTreeToggle<cr>", { desc = "Nvim tree toggle" })
+
+-- DAP (Debug Adapter Protocol)
+map("n", "<F5>", function()
+  require("dapui").open()
+  require("dap").continue()
+end, { desc = "DAP Start/Continue" })
+
+map("n", "<F10>", function()
+  require("dap").step_over()
+end, { desc = "DAP Step Over" })
+
+map("n", "<F11>", function()
+  require("dap").step_into()
+end, { desc = "DAP Step Into" })
+
+map("n", "<F12>", function()
+  require("dap").step_out()
+end, { desc = "DAP Step Out" })
+
+map("n", "<leader>db", function()
+  require("dap").toggle_breakpoint()
+end, { desc = "DAP Toggle Breakpoint" })
+
+map("n", "<leader>dB", function()
+  require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
+end, { desc = "DAP Conditional Breakpoint" })
+
+map("n", "<leader>dr", function()
+  require("dap").repl.open()
+end, { desc = "DAP REPL Open" })
+
+map("n", "<leader>dq", function()
+  require("dapui").close()
+  require("dap").terminate()
+end, { desc = "DAP Quit" })
