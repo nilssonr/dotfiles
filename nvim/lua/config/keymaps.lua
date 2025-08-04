@@ -1,6 +1,9 @@
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
+-- Buffers
+map("n", "<leader>bd", "<cmd>bd<cr>", { desc = "" })
+
 -- Format
 map("n", "<leader>f", function()
   require("conform").format({ async = true, lsp_fallback = true })
