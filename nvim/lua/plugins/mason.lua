@@ -27,7 +27,8 @@ return {
         "ts_ls",
         "rust_analyzer",
         "angularls",
-        "html"
+        "html",
+        "jsonls",
       },
       automatic_installation = false,
     },
