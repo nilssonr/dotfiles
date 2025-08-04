@@ -12,8 +12,7 @@ dap.configurations.cs = {
     name = "Launch .NET Core",
     request = "launch",
     program = function()
-      return "~/Code/nilssonr/TestingDebugger/TestingDebugger/bin/Debug/net9.0/TestingDebugger.dll"
-      -- return vim.fn.input("Path to DLL > ", vim.fn.getcwd() .. "/bin/Debug/", "file")
+      return vim.fn.input("Path to DLL > ", vim.fn.getcwd() .. "/bin/Debug/", "file")
     end,
     cwd = "${workspaceFolder}",
     stopAtEntry = true,
