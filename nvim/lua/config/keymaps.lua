@@ -38,7 +38,8 @@ map("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename Symbol" })
 map("n", "<leader>nt", "<cmd>Neorg journal today<cr>", { desc = "Neorg Journal Today" })
 map("n", "<leader>nT", "<cmd>Neorg journal tomorrow<cr>", { desc = "Neorg Journal Tomorrow" })
 map("n", "<leader>ny", "<cmd>Neorg journal yesterday<cr>", { desc = "Neorg Journal Yesterday" })
-map("n", "<leader>ni", "<cmd>Neorg journal toc open<cr>", { desc = "Neorg Journal Index" })
+map("n", "<leader>ni", "<cmd>Neorg index<cr>", { desc = "Neorg Index" })
+map("n", "<leader>nji", "<cmd>Neorg journal toc open<cr>", { desc = "Neorg Journal Index" })
 
 -- File tree
 map("n", "<leader>fb", "<cmd>NvimTreeToggle<cr>", { desc = "Nvim tree toggle" })
