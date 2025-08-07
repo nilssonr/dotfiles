@@ -1,9 +1,6 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    config = function()
-      --      require("lsp") -- this loads your lua/lsp/init.lua
-    end,
   },
   {
     "williamboman/mason.nvim",
@@ -29,6 +26,7 @@ return {
         "angularls",
         "html",
         "jsonls",
+        "prismals"
       },
       automatic_installation = false,
     },
