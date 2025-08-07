@@ -2,13 +2,10 @@ return {
   "nvim-telescope/telescope.nvim",
   dependencies = {
     "nvim-lua/plenary.nvim",
-    "nvim-telescope/telescope-file-browser.nvim",
   },
   cmd = "Telescope",
   config = function()
-    local fb_actions = require "telescope._extensions.file_browser.actions"
     local telescope = require("telescope")
-    telescope.load_extension("file_browser")
     telescope.load_extension("lazygit")
     telescope.setup({
       defaults = {
