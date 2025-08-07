@@ -1,7 +1,7 @@
 vim.diagnostic.config({
-  virtual_text = false,        -- disable inline text
+  virtual_text = false,
   virtual_lines = {
-    only_current_line = false, -- show all lines, not just current
+    current_line = true,
   },
   float = {
     border = "rounded",
