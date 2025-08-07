@@ -5,8 +5,8 @@ opt.relativenumber = true
 opt.mouse = ""
 opt.clipboard = "unnamedplus"
 
-opt.tabstop = 2
-opt.shiftwidth = 2
+opt.tabstop = 4
+opt.shiftwidth = 4
 opt.expandtab = true
 opt.smartindent = true
 

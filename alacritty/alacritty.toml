@@ -20,13 +20,14 @@ x = 4
 y = 4 
 
 [font]
-size = 15
+size = 12
 
 [font.normal]
 style = "Regular"
-# family = "JetBrainsMono Nerd Font"
+# family = "FiraCode Nerd Font Mono"
+family = "JetBrainsMono Nerd Font"
 #family = "MesloLGSDZ Nerd Font"
-family = "Inconsolata Nerd Font"
+# family = "Inconsolata Nerd Font"
 
 [scrolling]
 history = 10000
