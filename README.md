@@ -30,7 +30,7 @@ All configuration lives under ~/.config where possible.
 - zsh as login shell
 
 ### Multiplexer
-- tmux
+- tmux (>= 3.2 for display-popup)
 - Prefix: Ctrl + Space
 - i3-style pane navigation (Alt + H/J/K/L)
 - fzf session picker
@@ -225,4 +225,3 @@ Follow netcoredbg build instructions (documented in this repo).
 - Language servers and debuggers are installed explicitly
 - Configuration is Lua, modular, and readable
 - No magic, no auto-downloads, no silent behavior
-
