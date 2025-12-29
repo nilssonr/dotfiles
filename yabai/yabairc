@@ -1,53 +1,69 @@
 #!/usr/bin/env sh
 
-#
-# for this to work you must configure sudo such that
-# it will be able to run the command without password
-#
-# see this wiki page for information:
-#  - https://github.com/koekeishiya/yabai/wiki/Installing-yabai-(latest-release)#configure-scripting-addition
+# ===============================================================
+# Scripting Addition (Required for Some Features)
+# ===============================================================
+# For this to work you must configure sudo so it can run without password.
+# See:
+# - https://github.com/koekeishiya/yabai/wiki/Installing-yabai-(latest-release)#configure-scripting-addition
 #
 # yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 # sudo yabai --load-sa
 #
 
-# global settings
-yabai -m config                                 \
-    mouse_follows_focus          off            \
-    focus_follows_mouse          off            \
-    window_origin_display        default        \
-    window_placement             second_child   \
-    window_zoom_persist          on             \
-    window_topmost               off            \
-    window_shadow                on             \
-    window_animation_duration    0.0            \
-    window_animation_frame_rate  120            \
-    window_opacity_duration      0.0            \
-    active_window_opacity        0.9            \
-    normal_window_opacity        0.90           \
-    window_opacity               off            \
-    insert_feedback_color        0xffd75f5f     \
-    active_window_border_color   0xff775759     \
-    normal_window_border_color   0xff555555     \
-    window_border_width          4              \
-    window_border_radius         0             \
-    window_border_blur           off            \
-    window_border_hidpi          on             \
-    window_border                off            \
-    split_ratio                  0.50           \
-    split_type                   auto           \
-    auto_balance                 off            \
-    top_padding                  4             \
-    bottom_padding               4             \
-    left_padding                 4             \
-    right_padding                4             \
-    window_gap                   4             \
-    layout                       bsp            \
-    mouse_modifier               fn             \
-    mouse_action1                move           \
-    mouse_action2                resize         \
-    mouse_drop_action            swap
+# ===============================================================
+# Global Settings
+# ===============================================================
+yabai -m config mouse_follows_focus off # do not focus windows on mouse move
+yabai -m config focus_follows_mouse off # do not warp focus with mouse
+yabai -m config window_origin_display default # use current display as origin
+yabai -m config window_placement second_child # place new windows predictably
+yabai -m config window_zoom_persist on # preserve zoom state
 
-yabai -m rule --add label="System Settings" app="^System Settings$" title=".*" manage=off
+yabai -m config window_topmost off # prevent always-on-top
 
-echo "yabai configuration loaded.."
+yabai -m config window_shadow on # keep window shadows
+
+yabai -m config window_animation_duration 0.0 # disable window animations
+yabai -m config window_animation_frame_rate 120 # animation frame rate (when enabled)
+
+yabai -m config window_opacity_duration 0.0 # disable opacity animations
+yabai -m config active_window_opacity 0.9 # active window opacity
+yabai -m config normal_window_opacity 0.90 # inactive window opacity
+yabai -m config window_opacity off # disable global opacity
+
+yabai -m config insert_feedback_color 0xffd75f5f # insert feedback color
+
+yabai -m config active_window_border_color 0xff775759 # active border color
+yabai -m config normal_window_border_color 0xff555555 # inactive border color
+
+yabai -m config window_border_width 4 # border width in pixels
+yabai -m config window_border_radius 0 # border corner radius
+yabai -m config window_border_blur off # disable blurred borders
+yabai -m config window_border_hidpi on # crisp borders on HiDPI
+yabai -m config window_border off # disable borders globally
+
+yabai -m config split_ratio 0.50 # default split ratio
+yabai -m config split_type auto # auto split direction
+yabai -m config auto_balance off # do not auto-balance layouts
+
+yabai -m config top_padding 4 # top padding
+
+yabai -m config bottom_padding 4 # bottom padding
+yabai -m config left_padding 4 # left padding
+yabai -m config right_padding 4 # right padding
+yabai -m config window_gap 4 # gap between windows
+
+yabai -m config layout bsp # default layout: bsp
+
+yabai -m config mouse_modifier fn # modifier for mouse actions
+yabai -m config mouse_action1 move # mouse drag moves window
+yabai -m config mouse_action2 resize # mouse drag resizes window
+yabai -m config mouse_drop_action swap # drop swaps window positions
+
+# ===============================================================
+# Rules
+# ===============================================================
+yabai -m rule --add label="System Settings" app="^System Settings$" title=".*" manage=off # keep System Settings floating
+
+echo "yabai configuration loaded.." # startup confirmation

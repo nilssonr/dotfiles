@@ -1,38 +1,54 @@
+# ===============================================================
+# General
+# ===============================================================
 [general]
-import = ["~/.config/alacritty/github-dark-dimmed.toml"]
+import = ["~/.config/alacritty/github-dark-dimmed.toml"] # shared color palette
+live_config_reload = true # reload config on save
 
+# ===============================================================
+# Shell
+# ===============================================================
+[terminal.shell]
+program = "/bin/zsh" # login shell path
+args = ["-l"] # login shell flag
+
+# ===============================================================
+# Environment
+# ===============================================================
 [env]
-term = "xterm-256color"
-live_config_reload = "true"
+TERM = "xterm-256color" # terminal type for apps
 
+# ===============================================================
+# Window
+# ===============================================================
 [window]
-decorations = "Buttonless"
-dynamic_padding = false
-opacity = 0.8
-blur = true
+decorations = "Buttonless" # macOS titlebar style
+dynamic_padding = false # keep padding fixed on resize
+opacity = 0.8 # window transparency
+blur = true # enable background blur (macOS)
 
-[window.dimensions]
-columns = 0
-lines = 0
-
+# ===============================================================
+# Window Padding
+# ===============================================================
 [window.padding]
-x = 4 
-y = 4 
+x = 4 # horizontal padding in pixels
+y = 4 # vertical padding in pixels
 
+# ===============================================================
+# Font
+# ===============================================================
 [font]
-size = 13
+size = 13 # font size in points
 
+# ===============================================================
+# Font Family
+# ===============================================================
 [font.normal]
-style = "Regular"
-# family = "FiraCode Nerd Font Mono"
-family = "JetBrainsMono Nerd Font"
-#family = "MesloLGSDZ Nerd Font"
-# family = "Inconsolata Nerd Font"
+family = "JetBrainsMono Nerd Font" # primary font family
+style = "Regular" # font style
 
+# ===============================================================
+# Scrolling
+# ===============================================================
 [scrolling]
-history = 10000
-
-[keyboard]
-bindings = [
-	{ key = 'PageUp', mods = 'Shift', action = "ScrollPageUp"}
-]
+history = 100000 # number of lines to keep in scrollback
