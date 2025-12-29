@@ -1,5 +1,8 @@
+-- ===============================================================
+-- Debug Adapter Protocol (DAP)
+-- ===============================================================
 return {
-  "mfussenegger/nvim-dap",
+  "mfussenegger/nvim-dap", -- core DAP client
   keys = {
     { "<F5>", function() require("dap").continue() end, desc = "DAP continue" },
     { "<F10>", function() require("dap").step_over() end, desc = "DAP step over" },
@@ -16,11 +19,11 @@ return {
     { "<leader>dr", function() require("dap").repl.open() end, desc = "DAP REPL" },
   },
   dependencies = {
-    "mxsdev/nvim-dap-vscode-js",
+    "mxsdev/nvim-dap-vscode-js", -- JS/TS adapter integration
   },
   config = function()
-    local util = require("core.util")
-    local dap = require("dap")
+    local util = require("core.util") -- shared helpers
+    local dap = require("dap") -- DAP module
 
     -- Maintain adapters here; easy to add/remove.
     local adapters = {
@@ -40,8 +43,8 @@ return {
       },
     }
 
-    dap.adapters.go = adapters.go
-    dap.adapters.coreclr = adapters.coreclr
+    dap.adapters.go = adapters.go -- Go adapter
+    dap.adapters.coreclr = adapters.coreclr -- C# adapter
 
     -- Go configurations
     dap.configurations.go = {
@@ -79,14 +82,14 @@ return {
     }
 
     -- JS/TS via vscode-js-debug
-    local js_debug_path = vim.fn.stdpath("data") .. "/dap/vscode-js-debug"
+    local js_debug_path = vim.fn.stdpath("data") .. "/dap/vscode-js-debug" -- debugger install path
     if vim.fn.isdirectory(js_debug_path) ~= 1 then
       util.warn(("Missing vscode-js-debug at %s. See README.md for install steps."):format(js_debug_path))
     end
 
     require("dap-vscode-js").setup({
-      debugger_path = js_debug_path,
-      adapters = { "pwa-node" },
+      debugger_path = js_debug_path, -- local debugger path
+      adapters = { "pwa-node" }, -- adapters to enable
     })
 
     local node_launch = {
@@ -100,8 +103,8 @@ return {
       protocol = "inspector",
     }
 
-    dap.configurations.typescript = { node_launch }
-    dap.configurations.javascript = { node_launch }
+    dap.configurations.typescript = { node_launch } -- TS debug config
+    dap.configurations.javascript = { node_launch } -- JS debug config
 
     -- Optional: warn if debuggers missing
     if not util.executable("dlv") then
