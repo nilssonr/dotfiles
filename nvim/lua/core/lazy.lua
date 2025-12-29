@@ -1,9 +1,12 @@
-local M = {}
+-- ===============================================================
+-- lazy.nvim Bootstrap + Setup
+-- ===============================================================
+local M = {} -- module table
 
 function M.bootstrap()
-  local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+  local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim" -- lazy.nvim install path
   if vim.uv.fs_stat(lazypath) then
-    return lazypath
+    return lazypath -- already installed
   end
 
   vim.fn.system({
@@ -13,19 +16,19 @@ function M.bootstrap()
     "--depth=1",
     "https://github.com/folke/lazy.nvim.git",
     lazypath,
-  })
+  }) -- clone lazy.nvim
   return lazypath
 end
 
 function M.setup(spec)
-  local lazypath = M.bootstrap()
-  vim.opt.rtp:prepend(lazypath)
+  local lazypath = M.bootstrap() -- ensure lazy.nvim exists
+  vim.opt.rtp:prepend(lazypath) -- add to runtime path
 
   require("lazy").setup(spec, {
-    checker = { enabled = false }, -- explicit updates only
-    change_detection = { notify = false },
+    checker = { enabled = false }, -- disable auto-update checks
+    change_detection = { notify = false }, -- suppress change notifications
     ui = {
-      border = "rounded",
+      border = "rounded", -- popup border style
       icons = { -- disable icons completely
         cmd = "",
         config = "",

@@ -1,6 +1,10 @@
--- Leader key
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+-- ===============================================================
+-- Leader Keys
+-- ===============================================================
+vim.g.mapleader = " " -- global leader key
+vim.g.maplocalleader = " " -- local leader key
 
-require("core.profile").load()
-
+-- ===============================================================
+-- Profile Loader
+-- ===============================================================
+require("core.profile").load() -- load the active profile
