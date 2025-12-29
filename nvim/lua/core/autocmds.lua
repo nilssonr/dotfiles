@@ -1,11 +1,19 @@
+-- ===============================================================
+-- Autocommands
+-- ===============================================================
+
+-- ===============================================================
 -- Highlight on yank
+-- ===============================================================
 vim.api.nvim_create_autocmd("TextYankPost", {
     callback = function()
-        vim.highlight.on_yank({ timeout = 120 })
+        vim.highlight.on_yank({ timeout = 120 }) -- brief highlight of yanked text
     end,
 })
 
+-- ===============================================================
 -- Format on save (explicit, predictable)
+-- ===============================================================
 vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function()
         -- Only format real file buffers
@@ -13,10 +21,13 @@ vim.api.nvim_create_autocmd("BufWritePre", {
             return
         end
 
-        require("core.format").format_current_buffer()
+        require("core.format").format_current_buffer() -- format before write
     end,
 })
 
+-- ===============================================================
+-- Tree-sitter highlighting per filetype
+-- ===============================================================
 -- Tree-sitter highlighting is enabled by Neovim and must be started per filetype
 vim.api.nvim_create_autocmd("FileType", {
     pattern = {
@@ -36,6 +47,6 @@ vim.api.nvim_create_autocmd("FileType", {
         "xml",
     },
     callback = function()
-        vim.treesitter.start()
+        vim.treesitter.start() -- start tree-sitter highlighting
     end,
 })
