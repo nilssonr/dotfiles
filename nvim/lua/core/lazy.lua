@@ -2,7 +2,7 @@ local M = {}
 
 function M.bootstrap()
   local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-  if vim.loop.fs_stat(lazypath) then
+  if vim.uv.fs_stat(lazypath) then
     return lazypath
   end
 
