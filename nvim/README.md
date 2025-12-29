@@ -1,4 +1,3 @@
-cat <<'EOF' > ~/.config/nvim/README.md
 # Neovim Configuration (Lua, Lazy, Explicit Tooling)
 
 This Neovim configuration is designed to be:
@@ -6,7 +5,7 @@ This Neovim configuration is designed to be:
 - **Explicit**: no Mason, no auto-downloaded binaries
 - **Reproducible**: every external dependency is documented
 - **Maintainable**: no god files, table-driven configuration
-- **Scoped**: stable profile + experimental profiles
+- **Scoped**: stable profile with room for future profiles
 - **Text-only UI**: no icons, no italics
 - **Consistent** with terminal tooling (tmux, zsh, GitHub Dark Dimmed)
 
@@ -32,29 +31,24 @@ This Neovim configuration is designed to be:
       stable/
         init.lua
         plugins/
-          editorconfig.lua
-          theme.lua
-          which_key.lua
-          telescope.lua
           completion.lua
-          lsp.lua
-          roslyn.lua
           dap.lua
-      lab/
-        init.lua
-        plugins/
-          README.md
+          gitsigns.lua
+          roslyn.lua
+          theme.lua
+          telescope.lua
+          treesitter.lua
+          which_key.lua
 
 ---
 
 ## Profiles
 
 - **stable** (default): day-to-day work
-- **lab**: empty sandbox for experimentation
 
-Run a different profile with:
+To use a different profile, add `lua/profiles/<name>/init.lua` and run:
 
-NVIM_PROFILE=lab nvim
+NVIM_PROFILE=<name> nvim
 
 ---
 
@@ -71,9 +65,7 @@ lazy.nvim bootstraps itself on first run.
 
 ## EditorConfig
 
-This configuration respects `.editorconfig` via:
-
-editorconfig/editorconfig-vim
+This configuration respects `.editorconfig` via Neovim's built-in EditorConfig support.
 
 Global indentation settings are conservative defaults only.
 Per-project indentation is controlled by `.editorconfig`.
@@ -116,10 +108,6 @@ brew install yaml-language-server
 ### TOML
 
 brew install taplo
-
-### XML
-
-brew install lemminx
 
 ---
 
@@ -214,25 +202,20 @@ command -v dlv netcoredbg
 
 ## Formatting
 
-Formatting is **manual by default**:
+Formatting runs **on save** for real file buffers, and you can trigger it manually:
 
 <leader>f
 
-No format-on-save unless explicitly enabled.
+XML formatting uses `xmllint` (ensure it is on PATH; `brew install libxml2` if needed).
 
 ---
 
 ## Maintenance Notes
 
 - Add/remove LSP servers by editing a single table in:
-  lua/profiles/stable/plugins/lsp.lua
+  lua/core/lsp.lua
 
 - Add/remove DAP adapters by editing:
   lua/profiles/stable/plugins/dap.lua
 
-- Experiment safely in:
-  lua/profiles/lab/
-
 This configuration is intentionally boring, explicit, and durable.
-EOF
-
