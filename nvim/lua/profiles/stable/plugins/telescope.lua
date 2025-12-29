@@ -1,6 +1,9 @@
+-- ===============================================================
+-- Telescope
+-- ===============================================================
 return {
-  "nvim-telescope/telescope.nvim",
-  dependencies = { "nvim-lua/plenary.nvim" },
+  "nvim-telescope/telescope.nvim", -- fuzzy finder
+  dependencies = { "nvim-lua/plenary.nvim" }, -- required dependency
 
   -- IMPORTANT: keys cause Lazy to load the plugin when you press them
   keys = {
@@ -30,11 +33,10 @@ return {
     require("telescope").setup({
       defaults = {
         -- no icons
-        prompt_prefix = "> ",
-        selection_caret = "> ",
-        file_ignore_patterns = { "%.git/" },
+        prompt_prefix = "> ", -- prompt marker
+        selection_caret = "> ", -- selection marker
+        file_ignore_patterns = { "%.git/" }, -- ignore git directory
       },
     })
   end,
 }
-
