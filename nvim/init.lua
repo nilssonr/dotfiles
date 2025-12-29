@@ -1,8 +1,6 @@
+-- Leader key
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
-require("config.options")
-require("config.keymaps")
-require("config.lazy")
-require("config.diagnostics")
-require("config.rust_only").setup()
+require("core.profile").load()
+
