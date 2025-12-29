@@ -60,7 +60,7 @@ function M.setup()
     }
 
     -- Important: run dotnet from the payload directory so dependency probing works.
-    vim.lsp.config("roslyn", {
+    vim.lsp.config.roslyn = {
         cmd = {
             "dotnet",
             dll,
@@ -72,7 +72,9 @@ function M.setup()
         },
         cmd_cwd = dir,
         settings = settings,
-    })
+    }
+
+    vim.lsp.enable({ "roslyn" })
 end
 
 return M
