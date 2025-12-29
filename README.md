@@ -18,39 +18,40 @@ All configuration lives under ~/.config where possible.
 ## What’s Included
 
 ### Shell
-- zsh
-- Oh My Zsh (minimal plugins)
-- fzf history search
-- fnm (Fast Node Manager)
-- corepack (pnpm)
+- zsh (interactive shell)
+- Oh My Zsh (plugin framework, minimal plugins)
+- fzf history search (fuzzy Ctrl-R)
+- fnm (Fast Node Manager for Node.js)
+- corepack (pnpm shim and version management)
 
 ### Terminal
-- Alacritty
-- GitHub Dark Dimmed colors
-- zsh as login shell
+- Alacritty (GPU-accelerated terminal)
+- GitHub Dark Dimmed colors (theme)
+- zsh as login shell (default shell)
 
 ### Multiplexer
 - tmux (>= 3.2 for display-popup)
-- Prefix: Ctrl + Space
+- Prefix: Ctrl + Space (tmux prefix key)
 - i3-style pane navigation (Alt + H/J/K/L)
-- fzf session picker
-- GitHub Dark Dimmed statusline
-- macOS clipboard integration
+- fzf session picker (popup UI)
+- GitHub Dark Dimmed statusline (theme)
+- macOS clipboard integration (pbcopy)
 
 ### Editor
-- Neovim (Lua)
-- lazy.nvim
-- Built-in LSP (Neovim ≥ 0.11)
+- Neovim (Lua config)
+- lazy.nvim (plugin manager)
+- Built-in LSP (Neovim >= 0.11)
 - Tree-sitter (new rewrite API)
-- nvim-cmp (no snippets)
-- format-on-save
-- explicit external tooling
+- nvim-cmp (completion, no snippets)
+- format-on-save (BufWritePre)
+- explicit external tooling (no auto-downloads)
 
 ### Language Support
 - Go (gopls)
 - Rust (rust-analyzer)
-- TypeScript / JavaScript
-- JSON / YAML / TOML / XML
+- TypeScript / JavaScript (typescript-language-server)
+- JSON / YAML / TOML (vscode-json-languageserver, yaml-language-server, taplo)
+- XML formatting (xmllint)
 - C# via roslyn.nvim + Roslyn Language Server (manual install)
 - Debugging via DAP (netcoredbg, vscode-js-debug)
 
@@ -61,12 +62,15 @@ All configuration lives under ~/.config where possible.
 - macOS (Apple Silicon)
 - Xcode Command Line Tools available
 - You are comfortable installing some tools manually
+- tmux >= 3.2 available on PATH
 
 ---
 
 ## New Machine Setup (Step-by-Step)
 
 ### 1. Install Xcode Command Line Tools
+
+Installs Apple command line tools used by compilers and build tools:
 
 xcode-select --install
 
@@ -77,6 +81,8 @@ xcode-select -p
 ---
 
 ### 2. Install Homebrew
+
+Installs Homebrew package manager:
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
@@ -94,6 +100,8 @@ exec zsh -l
 
 ### 3. Clone This Repository
 
+Clone your dotfiles repo to a local directory:
+
 git clone <YOUR_REPO_URL> <DOTFILES_DIR>
 
 Example:
@@ -103,6 +111,8 @@ git clone git@github.com:yourname/dotfiles.git ~/Code/dotfiles
 ---
 
 ### 4. Link Configs into ~/.config
+
+Create symlinks so each tool reads from this repo:
 
 mkdir -p ~/.config
 
@@ -116,6 +126,8 @@ ln -snf <DOTFILES_DIR>/skhd      ~/.config/skhd
 
 ### 5. Set zsh as Login Shell
 
+Make zsh the default login shell:
+
 chsh -s /bin/zsh
 
 Open a new terminal and confirm:
@@ -126,6 +138,8 @@ echo "$SHELL"
 
 ### 6. Install Oh My Zsh
 
+Install the Oh My Zsh framework:
+
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 Replace ~/.zshrc with the version from this repo.
@@ -134,11 +148,19 @@ Replace ~/.zshrc with the version from this repo.
 
 ### 7. Install Core CLI Tools
 
+Install required CLI tools and build dependencies:
+
 brew install alacritty tmux fzf ripgrep fd git tree-sitter-cli make llvm
+
+Optional XML formatter (xmllint is used for XML formatting in Neovim):
+
+brew install libxml2
 
 ---
 
 ### 8. Node.js Tooling
+
+Install the Node.js version manager and pnpm tooling:
 
 brew install fnm
 
@@ -156,6 +178,8 @@ corepack prepare pnpm@latest --activate
 
 ### 9. Neovim
 
+Install Neovim and bootstrap plugins:
+
 brew install neovim
 
 First launch:
@@ -172,6 +196,8 @@ Restart Neovim.
 
 ### 10. Tree-sitter Parsers
 
+Install language parsers used by tree-sitter:
+
 Inside Neovim:
 
 :TSInstall all
@@ -180,6 +206,8 @@ Inside Neovim:
 
 ### 11. LSP Binaries
 
+Install language server binaries:
+
 brew install gopls rust-analyzer taplo yaml-language-server
 
 npm install -g typescript typescript-language-server vscode-json-languageserver
@@ -187,6 +215,8 @@ npm install -g typescript typescript-language-server vscode-json-languageserver
 ---
 
 ### 12. C# — Roslyn Language Server (Manual)
+
+Install Roslyn language server payload:
 
 mkdir -p ~/.local/share/lsp/roslyn
 
@@ -202,6 +232,8 @@ dotnet Microsoft.CodeAnalysis.LanguageServer.dll --version
 ---
 
 ### 13. Debuggers
+
+Install debugger binaries used by DAP:
 
 brew install go-delve
 
