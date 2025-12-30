@@ -97,6 +97,10 @@ brew install rust-analyzer
 
 npm i -g typescript typescript-language-server
 
+### Angular
+
+npm i -g @angular/language-server
+
 ### JSON
 
 npm i -g vscode-json-languageserver
@@ -192,6 +196,7 @@ netcoredbg --version
 command -v nvim rg fd fzf
 command -v gopls rust-analyzer
 command -v node
+command -v ngserver
 command -v dlv netcoredbg
 
 ### Neovim
