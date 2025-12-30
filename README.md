@@ -19,7 +19,9 @@ All configuration lives under ~/.config where possible.
 
 ### Shell
 - zsh (interactive shell)
+- XDG-based zsh config (ZDOTDIR=~/.config/zsh)
 - Oh My Zsh (plugin framework, minimal plugins)
+- zsh-autosuggestions (plugin)
 - fzf history search (fuzzy Ctrl-R)
 - fnm (Fast Node Manager for Node.js)
 - corepack (pnpm shim and version management)
@@ -120,12 +122,26 @@ mkdir -p ~/.config
 ln -snf <DOTFILES_DIR>/alacritty ~/.config/alacritty
 ln -snf <DOTFILES_DIR>/tmux      ~/.config/tmux
 ln -snf <DOTFILES_DIR>/nvim      ~/.config/nvim
+ln -snf <DOTFILES_DIR>/zsh       ~/.config/zsh
 ln -snf <DOTFILES_DIR>/yabai     ~/.config/yabai
 ln -snf <DOTFILES_DIR>/skhd      ~/.config/skhd
 
 ---
 
-### 5. Set zsh as Login Shell
+### 5. Point zsh at ~/.config/zsh (ZDOTDIR)
+
+Create a minimal ~/.zshenv so zsh loads dotfiles from ~/.config/zsh:
+
+cat <<'EOF' > ~/.zshenv
+export ZDOTDIR="$HOME/.config/zsh"
+source "$ZDOTDIR/.zshenv"
+EOF
+
+If you already have a ~/.zshenv, merge the two lines above instead of overwriting it.
+
+---
+
+### 6. Set zsh as Login Shell
 
 Make zsh the default login shell:
 
@@ -137,17 +153,22 @@ echo "$SHELL"
 
 ---
 
-### 6. Install Oh My Zsh
+### 7. Install Oh My Zsh
 
-Install the Oh My Zsh framework:
+Clone Oh My Zsh into the ZDOTDIR location used by this config:
 
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git ~/.config/zsh/oh-my-zsh
 
-Replace ~/.zshrc with the version from this repo.
+Avoid the Oh My Zsh install script; it overwrites ~/.zshrc.
+
+Install the autosuggestions plugin used by this config:
+
+git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git \
+  ~/.config/zsh/oh-my-zsh/custom/plugins/zsh-autosuggestions
 
 ---
 
-### 7. Install Core CLI Tools
+### 8. Install Core CLI Tools
 
 Install required CLI tools and build dependencies:
 
@@ -159,15 +180,13 @@ brew install libxml2
 
 ---
 
-### 8. Node.js Tooling
+### 9. Node.js Tooling
 
 Install the Node.js version manager and pnpm tooling:
 
 brew install fnm
 
-Add to ~/.zprofile:
-
-eval "$(fnm env --use-on-cd)"
+fnm is initialized in the zsh config from this repo.
 
 fnm install --lts
 fnm use --lts
@@ -177,7 +196,7 @@ corepack prepare pnpm@latest --activate
 
 ---
 
-### 9. Neovim
+### 10. Neovim
 
 Install Neovim and bootstrap plugins:
 
@@ -195,7 +214,7 @@ Restart Neovim.
 
 ---
 
-### 10. Tree-sitter Parsers
+### 11. Tree-sitter Parsers
 
 Install language parsers used by tree-sitter:
 
@@ -205,7 +224,7 @@ Inside Neovim:
 
 ---
 
-### 11. LSP Binaries
+### 12. LSP Binaries
 
 Install language server binaries:
 
@@ -216,7 +235,7 @@ npm install -g @angular/language-server
 
 ---
 
-### 12. C# — Roslyn Language Server (Manual)
+### 13. C# — Roslyn Language Server (Manual)
 
 Install Roslyn language server payload:
 
@@ -233,7 +252,7 @@ dotnet Microsoft.CodeAnalysis.LanguageServer.dll --version
 
 ---
 
-### 13. Debuggers
+### 14. Debuggers
 
 Install debugger binaries used by DAP:
 
