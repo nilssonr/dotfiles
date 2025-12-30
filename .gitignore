@@ -1,2 +1,11 @@
 tmux/plugins
+tmux/*.bak*
 .worktrees/
+zsh/.zsh_history*
+zsh/.zsh_sessions/
+zsh/.zcompdump*
+zsh/.zcompcache/
+zsh/*.zwc
+zsh/.shell.pre-oh-my-zsh
+zsh/.zshrc.pre-oh-my-zsh
+zsh/oh-my-zsh/
