@@ -11,6 +11,12 @@ map("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit" }) -- quit window
 map("n", "<leader>Q", "<cmd>qa!<cr>", { desc = "Quit all (force)" }) -- quit all without prompts
 
 -- ===============================================================
+-- Editing
+-- ===============================================================
+map("x", "x", '"_d', { desc = "Delete without yanking" }) -- visual delete to black hole
+map("x", "X", '"_d', { desc = "Delete without yanking" }) -- visual delete to black hole
+
+-- ===============================================================
 -- Diagnostics
 -- ===============================================================
 map("n", "<leader>e", vim.diagnostic.open_float, { desc = "Diagnostics float" }) -- show diagnostic popup
@@ -89,4 +95,3 @@ end, { desc = "Right (terminal)" })
 -- Terminal
 -- ===============================================================
 map("t", "<Esc>", "<C-\\><C-n>", { desc = "Terminal normal mode" }) -- exit terminal mode
-
