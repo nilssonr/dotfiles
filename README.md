@@ -50,6 +50,7 @@ All configuration lives under ~/.config where possible.
 - Go (gopls)
 - Rust (rust-analyzer)
 - TypeScript / JavaScript (typescript-language-server)
+- Angular (Angular Language Server)
 - JSON / YAML / TOML (vscode-json-languageserver, yaml-language-server, taplo)
 - XML formatting (xmllint)
 - C# via roslyn.nvim + Roslyn Language Server (manual install)
@@ -211,6 +212,7 @@ Install language server binaries:
 brew install gopls rust-analyzer taplo yaml-language-server
 
 npm install -g typescript typescript-language-server vscode-json-languageserver
+npm install -g @angular/language-server
 
 ---
 
