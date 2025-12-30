@@ -56,6 +56,23 @@ function M.setup()
             cmd = { "typescript-language-server", "--stdio" }, -- TypeScript/JS language server
             filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" }, -- TS/JS filetypes
         },
+        angularls = {
+            cmd = function(dispatchers, config)
+                local root_dir = config.root_dir or vim.fn.getcwd() -- Angular project root
+                local cmd = {
+                    "ngserver",
+                    "--stdio",
+                    "--tsProbeLocations",
+                    root_dir,
+                    "--ngProbeLocations",
+                    root_dir,
+                }
+                return vim.lsp.rpc.start(cmd, dispatchers, { cwd = root_dir })
+            end,
+            filetypes = { "typescript", "typescriptreact", "html" }, -- Angular TS and templates
+            root_markers = { "angular.json", "project.json" }, -- Angular workspace roots
+            workspace_required = true, -- avoid starting outside Angular projects
+        },
         yamlls = {
             cmd = { "yaml-language-server", "--stdio" }, -- YAML language server
             filetypes = { "yaml", "yml" }, -- YAML filetypes
@@ -100,7 +117,7 @@ function M.setup()
         cfg.capabilities = capabilities -- apply shared capabilities
         cfg.on_attach = on_attach -- attach keymaps
 
-        if cfg.cmd and cfg.cmd[1] and not util.executable(cfg.cmd[1]) then
+        if type(cfg.cmd) == "table" and cfg.cmd[1] and not util.executable(cfg.cmd[1]) then
             -- Optional warning; keep quiet by default
             -- util.warn(("Missing LSP binary for %s: %s"):format(name, cfg.cmd[1]))
         end
