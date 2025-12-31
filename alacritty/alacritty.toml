@@ -32,7 +32,7 @@ blur = true # enable background blur (macOS)
 # ===============================================================
 [window.padding]
 x = 4 # horizontal padding in pixels
-y = 4 # vertical padding in pixels
+y = 0 # vertical padding in pixels
 
 # ===============================================================
 # Font
