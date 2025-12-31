@@ -19,5 +19,8 @@ return {
       },
     })
     vim.cmd.colorscheme("github_dark_dimmed") -- apply colorscheme
+    -- Make statusline blend with terminal background.
+    vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE" })
+    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE" })
   end,
 }
