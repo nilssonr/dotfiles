@@ -45,7 +45,9 @@ esac
 export PATH="$HOME/.local/bin:$PATH"
 
 # go bin
-export PATH="$(go env GOPATH)/bin:$PATH"
+if command -v go >/dev/null 2>&1; then
+  export PATH="$(go env GOPATH)/bin:$PATH"
+fi
 
 # Corepack: suppress download prompt
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0

@@ -1,280 +1,266 @@
-# Dotfiles — Terminal-First, Explicit, Reproducible
+# Dotfiles — Terminal-first, explicit, reproducible (macOS-first)
 
-This repository contains my full development environment configuration.
+This repository contains my personal development-environment configuration.
 
-The guiding principles are:
+It is organized as **XDG-style config directories** that are intended to be symlinked into `~/.config`.
 
-- Explicit tooling (no Mason, no hidden downloads)
-- Reproducible setup on a brand-new machine
-- Terminal-first workflow
-- GitHub Dark Dimmed everywhere
-- Minimal UI (no icons, no italics)
-- Clear separation between plugins, binaries, and glue code
+## Principles
 
-All configuration lives under ~/.config where possible.
+- **Explicit tooling**: language servers/debuggers are installed manually (no Mason, no silent binary downloads)
+- **Reproducible**: configuration is versioned; Neovim plugins are pinned via `nvim/lazy-lock.json`
+- **Terminal-first**: Alacritty + tmux + Neovim
+- **Consistent theme**: GitHub Dark Dimmed across terminal/editor where possible
+- **Minimal UI**: no icons, no italics, text-first affordances
 
----
-
-## What’s Included
-
-### Shell
-- zsh (interactive shell)
-- XDG-based zsh config (ZDOTDIR=~/.config/zsh)
-- Oh My Zsh (plugin framework, minimal plugins)
-- zsh-autosuggestions (plugin)
-- fzf history search (fuzzy Ctrl-R)
-- fnm (Fast Node Manager for Node.js)
-- corepack (pnpm shim and version management)
-
-### Terminal
-- Alacritty (GPU-accelerated terminal)
-- GitHub Dark Dimmed colors (theme)
-- zsh as login shell (default shell)
-
-### Multiplexer
-- tmux (>= 3.2 for display-popup)
-- Prefix: Ctrl + Space (tmux prefix key)
-- i3-style pane navigation (Alt + H/J/K/L)
-- fzf session picker (popup UI)
-- GitHub Dark Dimmed statusline (theme)
-- macOS clipboard integration (pbcopy)
-
-### Editor
-- Neovim (Lua config)
-- lazy.nvim (plugin manager)
-- Built-in LSP (Neovim >= 0.11)
-- Tree-sitter (new rewrite API)
-- nvim-cmp (completion, no snippets)
-- format-on-save (BufWritePre)
-- explicit external tooling (no auto-downloads)
-
-### Language Support
-- Go (gopls)
-- Rust (rust-analyzer)
-- TypeScript / JavaScript (typescript-language-server)
-- Angular (Angular Language Server)
-- JSON / YAML / TOML (vscode-json-languageserver, yaml-language-server, taplo)
-- XML formatting (xmllint)
-- C# via roslyn.nvim + Roslyn Language Server (manual install)
-- Debugging via DAP (netcoredbg, vscode-js-debug)
+All configuration lives under `~/.config` where possible.
 
 ---
 
-## Assumptions
+## Scope / platform
 
-- macOS (Apple Silicon)
-- Xcode Command Line Tools available
-- You are comfortable installing some tools manually
-- tmux >= 3.2 available on PATH
+- Primary target: **macOS (Apple Silicon)**
+- macOS-only: `yabai/`, `skhd/`
+- Cross-platform-ish: `tmux/` (battery script supports macOS via `pmset` and Linux via `upower`)
 
 ---
 
-## New Machine Setup (Step-by-Step)
+## Repository layout
 
-### 1. Install Xcode Command Line Tools
+These directories map directly to `~/.config/*`:
 
-Installs Apple command line tools used by compilers and build tools:
+- `alacritty/` → `~/.config/alacritty`
+- `tmux/` → `~/.config/tmux`
+- `nvim/` → `~/.config/nvim`
+- `zsh/` → `~/.config/zsh` (**requires `ZDOTDIR`**)
+- `yabai/` → `~/.config/yabai` (macOS)
+- `skhd/` → `~/.config/skhd` (macOS)
+- `gh/` → `~/.config/gh`
 
+---
+
+## Quickstart (new machine)
+
+### 1) Prerequisites
+
+Install Xcode Command Line Tools:
+
+```sh
 xcode-select --install
+```
 
-Verify:
+Install Homebrew using the official installer.
 
-xcode-select -p
+### 2) Clone
 
----
+```sh
+git clone https://github.com/nilssonr/dotfiles.git ~/Code/dotfiles
+```
 
-### 2. Install Homebrew
+### 3) Symlink into `~/.config`
 
-Installs Homebrew package manager:
+```sh
+DOTFILES="$HOME/Code/dotfiles"
+mkdir -p "$HOME/.config"
 
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+for d in alacritty tmux nvim zsh yabai skhd gh; do
+  ln -snf "$DOTFILES/$d" "$HOME/.config/$d"
+done
+```
 
-Enable brew in login shells:
+### 4) Point zsh at `~/.config/zsh` (ZDOTDIR)
 
-if [ -x /opt/homebrew/bin/brew ]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
+Create or edit `~/.zshenv` so zsh reads config from `~/.config/zsh`:
 
-Restart your shell:
-
-exec zsh -l
-
----
-
-### 3. Clone This Repository
-
-Clone your dotfiles repo to a local directory:
-
-git clone <YOUR_REPO_URL> <DOTFILES_DIR>
-
-Example:
-
-git clone git@github.com:yourname/dotfiles.git ~/Code/dotfiles
-
----
-
-### 4. Link Configs into ~/.config
-
-Create symlinks so each tool reads from this repo:
-
-mkdir -p ~/.config
-
-ln -snf <DOTFILES_DIR>/alacritty ~/.config/alacritty
-ln -snf <DOTFILES_DIR>/tmux      ~/.config/tmux
-ln -snf <DOTFILES_DIR>/nvim      ~/.config/nvim
-ln -snf <DOTFILES_DIR>/zsh       ~/.config/zsh
-ln -snf <DOTFILES_DIR>/yabai     ~/.config/yabai
-ln -snf <DOTFILES_DIR>/skhd      ~/.config/skhd
-
----
-
-### 5. Point zsh at ~/.config/zsh (ZDOTDIR)
-
-Create a minimal ~/.zshenv so zsh loads dotfiles from ~/.config/zsh:
-
+```sh
 cat <<'EOF' > ~/.zshenv
 export ZDOTDIR="$HOME/.config/zsh"
 source "$ZDOTDIR/.zshenv"
 EOF
+```
 
-If you already have a ~/.zshenv, merge the two lines above instead of overwriting it.
+If you already have a `~/.zshenv`, merge the two lines instead of overwriting.
 
----
+### 5) Install core packages
 
-### 6. Set zsh as Login Shell
+```sh
+brew install \
+  alacritty tmux neovim \
+  fzf ripgrep fd git \
+  tree-sitter-cli llvm make \
+  lazygit gh
+```
 
-Make zsh the default login shell:
+Optional (used by specific features):
 
-chsh -s /bin/zsh
+```sh
+brew install fnm libxml2
+```
 
-Open a new terminal and confirm:
+Notes:
+- `libxml2` provides `xmllint` (used for XML formatting in Neovim).
+- `fnm` and Corepack are used for Node.js + pnpm workflows.
 
-echo "$SHELL"
+### 6) Fonts
 
----
+Alacritty is configured to use `JetBrainsMono Nerd Font`.
 
-### 7. Install Oh My Zsh
+Install a Nerd Font (choose one approach):
 
-Clone Oh My Zsh into the ZDOTDIR location used by this config:
+```sh
+brew install --cask font-jetbrains-mono-nerd-font
+```
 
-git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git ~/.config/zsh/oh-my-zsh
+Or install the font manually and adjust `alacritty/alacritty.toml` if you prefer a non-nerd font.
 
-Avoid the Oh My Zsh install script; it overwrites ~/.zshrc.
+### 7) Oh My Zsh + autosuggestions
 
-Install the autosuggestions plugin used by this config:
+This repo intentionally does **not** vendor Oh My Zsh.
+
+```sh
+git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git \
+  ~/.config/zsh/oh-my-zsh
 
 git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git \
   ~/.config/zsh/oh-my-zsh/custom/plugins/zsh-autosuggestions
+```
 
----
+### 8) tmux plugins (TPM)
 
-### 8. Install Core CLI Tools
+TPM is expected at `~/.config/tmux/plugins/tpm`:
 
-Install required CLI tools and build dependencies:
+```sh
+mkdir -p ~/.config/tmux/plugins
+git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+```
 
-brew install alacritty tmux fzf ripgrep fd git tree-sitter-cli make llvm
+Then in tmux:
+- Press the tmux prefix (`Ctrl` + `Space`)
+- Press `I` (capital i) to install plugins
 
-Optional XML formatter (xmllint is used for XML formatting in Neovim):
-
-brew install libxml2
-
----
-
-### 9. Node.js Tooling
-
-Install the Node.js version manager and pnpm tooling:
-
-brew install fnm
-
-fnm is initialized in the zsh config from this repo.
-
-fnm install --lts
-fnm use --lts
-
-corepack enable
-corepack prepare pnpm@latest --activate
-
----
-
-### 10. Neovim
-
-Install Neovim and bootstrap plugins:
-
-brew install neovim
+### 9) Neovim
 
 First launch:
 
+```sh
 nvim
+```
 
 Then inside Neovim:
 
+```vim
 :Lazy sync
+```
 
-Restart Neovim.
+Language servers, debuggers, and Roslyn install steps are documented in:
+- `nvim/README.md`
 
----
+### 10) yabai + skhd (macOS)
 
-### 11. Tree-sitter Parsers
+Install:
 
-Install language parsers used by tree-sitter:
+```sh
+brew install yabai skhd
+```
 
-Inside Neovim:
+Start services:
 
-:TSInstall all
+```sh
+brew services start yabai
+brew services start skhd
+```
 
----
-
-### 12. LSP Binaries
-
-Install language server binaries:
-
-brew install gopls rust-analyzer taplo yaml-language-server
-
-npm install -g typescript typescript-language-server vscode-json-languageserver
-npm install -g @angular/language-server
+You must also grant Accessibility permissions to yabai/skhd (System Settings → Privacy & Security → Accessibility).
 
 ---
 
-### 13. C# — Roslyn Language Server (Manual)
+## Keybindings (cheatsheet)
 
-Install Roslyn language server payload:
+### tmux
 
-mkdir -p ~/.local/share/lsp/roslyn
+- Prefix: `Ctrl` + `Space`
+- Focus panes: `Alt` + `h/j/k/l`
+- Resize panes: `Alt` + `Shift` + `H/J/K/L`
+- Split panes:
+  - Prefix + `v` → horizontal split (left/right)
+  - Prefix + `h` → vertical split (top/bottom)
+- Session picker (popup): Prefix + `f`
+- New session (prompt): Prefix + `C`
+- Rename session (prompt): Prefix + `R`
 
-Download Microsoft.CodeAnalysis.LanguageServer.neutral nupkg.
+Note: new panes/windows intentionally start in `$HOME` (see `tmux/tmux.conf`).
 
-unzip Microsoft.CodeAnalysis.LanguageServer.neutral.*.nupkg -d ~/.local/share/lsp/roslyn
+### Neovim
 
-Verify:
+Leader is `Space`.
 
-cd ~/.local/share/lsp/roslyn/content/LanguageServer/osx-arm64
-dotnet Microsoft.CodeAnalysis.LanguageServer.dll --version
+- Buffers: `<leader><leader>`
+- Find files: `<leader>ff`
+- Live grep: `<leader>fg`
+- Help: `<leader>fh`
+- Format buffer: `<leader>f`
+- File browser (nvim-tree): `<leader>fb`
+- Lazygit (floating terminal): `<leader>lg`
+- Git blame (toggle line): `<leader>gb`
+- Diagnostics float: `<leader>e`
+- Diagnostic navigation: `[d` / `]d`
+
+DAP:
+- Continue: `<F5>`
+- Step over: `<F10>`
+- Step into: `<F11>`
+- Step out: `<F12>`
+- Toggle breakpoint: `<leader>b`
+
+Note: when launching Neovim with no file args, it shows a small “What are you here to do?” intent buffer.
+
+### zsh
+
+- Project picker: `p` (alias for `cproj`)
+- Project picker widget: `Ctrl` + `P`
+
+### yabai / skhd (macOS)
+
+- Focus window: `Alt` + `h/j/k/l`
+- Move window: `Shift` + `Alt` + `h/j/k/l`
+- Resize window: `Ctrl` + `Alt` + `h/j/k/l`
+- Balance layout: `Ctrl` + `Alt` + `e`
+- Toggle float + border: `Shift` + `Alt` + `Space`
+- Fullscreen:
+  - `Alt` + `f` → yabai zoom fullscreen
+  - `Shift` + `Alt` + `f` → macOS native fullscreen
 
 ---
 
-### 14. Debuggers
+## Local overrides
 
-Install debugger binaries used by DAP:
+Recommended pattern:
 
-brew install go-delve
+- `~/.config/zsh/local.zsh` (machine-specific env vars, work-specific PATH, etc.)
+- `~/.config/nvim/lua/local.lua` (machine-specific editor tweaks)
 
-Follow netcoredbg build instructions (documented in this repo).
-
----
-
-## Daily Usage
-
-- Ctrl + Space — tmux prefix
-- Space Space — Telescope buffers
-- Space f — format buffer
-- Space g g — lazygit
-- Space g b — inline git blame
+Keep these files out of git.
 
 ---
 
-## Philosophy
+## Tests
 
-- Plugins are managed by lazy.nvim
-- Language servers and debuggers are installed explicitly
-- Configuration is Lua, modular, and readable
-- No magic, no auto-downloads, no silent behavior
+There is a small headless Neovim test for the Angular LSP config:
+
+```sh
+nvim --headless -u NONE -c "lua dofile('nvim/tests/angular_lsp.lua')" -c "qa"
+```
+
+---
+
+## Security notes
+
+- Treat `gh/hosts.yml` as **high risk**: `gh auth login` can write auth tokens into it.
+  If a token ever gets committed, rotate it and scrub git history.
+
+---
+
+## Maintenance
+
+- Homebrew: `brew update && brew upgrade`
+- Neovim plugins: `:Lazy update` (commit the updated `nvim/lazy-lock.json`)
+
