@@ -113,6 +113,10 @@ brew install yaml-language-server
 
 brew install taplo
 
+### Lua
+
+brew install lua-language-server
+
 ---
 
 ## C# Language Server
@@ -198,6 +202,7 @@ command -v gopls rust-analyzer
 command -v node
 command -v ngserver
 command -v dlv netcoredbg
+command -v lua-language-server
 
 ### Neovim
 
