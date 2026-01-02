@@ -111,7 +111,7 @@ return {
       util.warn("Missing delve (dlv). Install: brew install delve")
     end
     if not util.executable("netcoredbg") then
-      util.warn("Missing netcoredbg. Install: brew install netcoredbg")
+        util.warn("Missing netcoredbg. Build/install it (see nvim/README.md).")
     end
   end,
 }

@@ -2,7 +2,7 @@
 -- UI
 -- ===============================================================
 vim.opt.number = true         -- show absolute line numbers
-vim.opt.relativenumber = true -- do not use relative line numbers
+vim.opt.relativenumber = true -- show relative line numbers
 
 vim.opt.termguicolors = true  -- enable 24-bit color
 vim.opt.signcolumn = "yes"    -- always show sign column
