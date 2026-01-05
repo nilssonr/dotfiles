@@ -9,3 +9,5 @@ zsh/*.zwc
 zsh/.shell.pre-oh-my-zsh
 zsh/.zshrc.pre-oh-my-zsh
 zsh/oh-my-zsh/
+docs/
+nvim/docs/

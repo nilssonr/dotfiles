@@ -23,6 +23,15 @@ vim.opt.updatetime = 250 -- faster CursorHold and diagnostics
 vim.opt.timeoutlen = 400 -- key sequence timeout
 
 -- ===============================================================
+-- Swap
+-- ===============================================================
+local swap_dir = vim.fn.expand("~/.nvim-swp")
+if vim.fn.isdirectory(swap_dir) == 0 then
+    vim.fn.mkdir(swap_dir, "p")
+end
+vim.opt.directory = { swap_dir .. "//" } -- keep swap files out of project trees
+
+-- ===============================================================
 -- Indentation
 -- ===============================================================
 -- Do not force indentation width here; EditorConfig will set per-buffer.
