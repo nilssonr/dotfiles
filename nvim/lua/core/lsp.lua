@@ -47,24 +47,6 @@ function M.setup()
     capabilities.textDocument.completion.completionItem.snippetSupport = false -- disable snippet completions
 
     -- ===========================================================
-    -- lsp keymaps (buffer-local)
-    -- ===========================================================
-    local function on_attach(_, bufnr)
-        local map = function(mode, lhs, rhs, desc)
-            vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc }) -- buffer-local map helper
-        end
-
-        map("n", "gd", vim.lsp.buf.definition, "go to definition")     -- jump to definition
-        map("n", "gr", vim.lsp.buf.references, "references")           -- list references
-        map("n", "K", vim.lsp.buf.hover, "Hover")                      -- hover documentation
-        map("n", "<leader>rn", vim.lsp.buf.rename, "Rename")           -- rename symbol
-        map("n", "<leader>ca", vim.lsp.buf.code_action, "Code action") -- code actions
-        map("n", "<leader>f", function()
-            vim.lsp.buf.format({ async = true })                       -- LSP format current buffer
-        end, "Format")
-    end
-
-    -- ===========================================================
     -- Server Definitions
     -- ===========================================================
     -- Edit ONE table to add/remove servers
@@ -87,29 +69,29 @@ function M.setup()
             cmd = { "typescript-language-server", "--stdio" },                                -- TypeScript/JS language server
             filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" }, -- TS/JS filetypes
         },
-angularls = {
-    cmd = function(dispatchers, config)
-        local root_dir = config.root_dir or vim.fn.getcwd()
+        angularls = {
+            cmd = function(dispatchers, config)
+                local root_dir = config.root_dir or vim.fn.getcwd()
 
-        local probes = angular_probe_locations(root_dir)
-        local probe_arg = table.concat(probes, ",")
+                local probes = angular_probe_locations(root_dir)
+                local probe_arg = table.concat(probes, ",")
 
-        local cmd = {
-            "ngserver",
-            "--stdio",
-            "--tsProbeLocations",
-            probe_arg,
-            "--ngProbeLocations",
-            probe_arg,
-        }
+                local cmd = {
+                    "ngserver",
+                    "--stdio",
+                    "--tsProbeLocations",
+                    probe_arg,
+                    "--ngProbeLocations",
+                    probe_arg,
+                }
 
-        return vim.lsp.rpc.start(cmd, dispatchers, { cwd = root_dir })
-    end,
+                return vim.lsp.rpc.start(cmd, dispatchers, { cwd = root_dir })
+            end,
 
-    filetypes = { "typescript", "typescriptreact", "html" },
-    root_markers = { "angular.json", "project.json" },
-    workspace_required = true,
-},
+            filetypes = { "typescript", "typescriptreact", "html" },
+            root_markers = { "angular.json", "project.json" },
+            workspace_required = true,
+        },
         yamlls = {
             cmd = { "yaml-language-server", "--stdio" }, -- YAML language server
             filetypes = { "yaml", "yml" },               -- YAML filetypes
@@ -152,7 +134,6 @@ angularls = {
     -- ===========================================================
     for name, cfg in pairs(servers) do
         cfg.capabilities = capabilities -- apply shared capabilities
-        cfg.on_attach = on_attach       -- attach keymaps
 
         if type(cfg.cmd) == "table" and cfg.cmd[1] and not util.executable(cfg.cmd[1]) then
             -- Optional warning; keep quiet by default
