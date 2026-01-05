@@ -33,6 +33,34 @@ map("n", "<leader>f", function()
 end, { desc = "Format buffer" })
 
 -- ===============================================================
+-- LSP (buffer-local)
+-- ===============================================================
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+        local bufnr = args.buf
+
+        if vim.b[bufnr].lsp_keymaps then
+            return
+        end
+
+        vim.b[bufnr].lsp_keymaps = true
+
+        local map = function(mode, lhs, rhs, desc)
+            vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc }) -- buffer-local map helper
+        end
+
+        map("n", "gd", vim.lsp.buf.definition, "go to definition")     -- jump to definition
+        map("n", "gr", vim.lsp.buf.references, "references")           -- list references
+        map("n", "K", vim.lsp.buf.hover, "Hover")                      -- hover documentation
+        map("n", "<leader>lr", vim.lsp.buf.rename, "Rename")           -- rename symbol
+        map("n", "<leader>la", vim.lsp.buf.code_action, "Code action") -- code actions
+        map("n", "<leader>f", function()
+            vim.lsp.buf.format({ async = true })                       -- LSP format current buffer
+        end, "Format")
+    end,
+})
+
+-- ===============================================================
 -- Navigation
 -- ===============================================================
 -- Smart split navigation:
