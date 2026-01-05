@@ -193,6 +193,26 @@ netcoredbg --version
 
 ---
 
+## Testing (Neotest)
+
+Neotest provides unified test execution for Go and .NET.
+
+Keymaps:
+
+- `<leader>tn`: run nearest test
+- `<leader>tf`: run file tests
+- `<leader>ts`: run suite (uses .NET root override)
+- `<leader>tS`: toggle summary panel
+- `<leader>to`: open output window
+- `<leader>tr`: re-run last test
+
+.NET suite default:
+
+- `<leader>ts` runs `dotnet test src` when `src/` exists in the repo root.
+- Add exceptions in `nvim/lua/profiles/stable/plugins/neotest.lua` (overrides table).
+
+---
+
 ## Health Checks
 
 ### Shell
