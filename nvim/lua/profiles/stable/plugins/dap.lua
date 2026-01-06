@@ -27,6 +27,40 @@ return {
     local util = require("core.util") -- shared helpers
     local dap = require("dap") -- DAP module
     local dapui = require("dapui") -- DAP UI
+    local function read_env_file(path)
+      if vim.fn.filereadable(path) ~= 1 then
+        return {}
+      end
+
+      local env = {}
+      for _, line in ipairs(vim.fn.readfile(path)) do
+        local trimmed = vim.trim(line)
+        if trimmed ~= "" and not trimmed:match("^#") then
+          trimmed = trimmed:gsub("^export%s+", "")
+          local key, value = trimmed:match("^([^=]+)=(.*)$")
+          if key and value then
+            key = vim.trim(key)
+            value = vim.trim(value)
+            local first = value:sub(1, 1)
+            local last = value:sub(-1)
+            if (first == "'" and last == "'") or (first == "\"" and last == "\"") then
+              value = value:sub(2, -2)
+            end
+            env[key] = value
+          end
+        end
+      end
+      return env
+    end
+
+    local function load_env_from_cwd()
+      local env_path = vim.fn.getcwd() .. "/.env"
+      local env = read_env_file(env_path)
+      if next(env) == nil then
+        util.warn(("No .env file found at %s"):format(env_path))
+      end
+      return env
+    end
 
     -- Maintain adapters here; easy to add/remove.
     local adapters = {
@@ -56,6 +90,14 @@ return {
         name = "Debug package",
         request = "launch",
         program = "${fileDirname}",
+      },
+      {
+        type = "go",
+        name = "Debug caser (serve)",
+        request = "launch",
+        program = "${workspaceFolder}",
+        args = { "serve" },
+        env = load_env_from_cwd,
       },
       {
         type = "go",
