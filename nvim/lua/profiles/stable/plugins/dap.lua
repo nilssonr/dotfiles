@@ -20,10 +20,13 @@ return {
   },
   dependencies = {
     "mxsdev/nvim-dap-vscode-js", -- JS/TS adapter integration
+    "rcarriga/nvim-dap-ui", -- DAP UI
+    "nvim-neotest/nvim-nio", -- async helpers (dap-ui dependency)
   },
   config = function()
     local util = require("core.util") -- shared helpers
     local dap = require("dap") -- DAP module
+    local dapui = require("dapui") -- DAP UI
 
     -- Maintain adapters here; easy to add/remove.
     local adapters = {
@@ -105,6 +108,18 @@ return {
 
     dap.configurations.typescript = { node_launch } -- TS debug config
     dap.configurations.javascript = { node_launch } -- JS debug config
+
+    -- DAP UI: auto-open/close with session lifecycle.
+    dapui.setup()
+    dap.listeners.after.event_initialized["dapui_config"] = function()
+      dapui.open()
+    end
+    dap.listeners.before.event_terminated["dapui_config"] = function()
+      dapui.close()
+    end
+    dap.listeners.before.event_exited["dapui_config"] = function()
+      dapui.close()
+    end
 
     -- Optional: warn if debuggers missing
     if not util.executable("dlv") then
