@@ -54,14 +54,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
             vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc }) -- buffer-local map helper
         end
 
-        map("n", "gd", vim.lsp.buf.definition, "go to definition")     -- jump to definition
-        map("n", "gr", vim.lsp.buf.references, "references")           -- list references
-        map("n", "gI", vim.lsp.buf.implementation, "implementations")  -- find implementations
-        map("n", "K", vim.lsp.buf.hover, "Hover")                      -- hover documentation
-        map("n", "<leader>lr", vim.lsp.buf.rename, "Rename")           -- rename symbol
-        map("n", "<leader>la", vim.lsp.buf.code_action, "Code action") -- code actions
+        map("n", "gd", vim.lsp.buf.definition, "go to definition")      -- jump to definition
+        map("n", "gr", vim.lsp.buf.references, "references")            -- list references
+        map("n", "gI", vim.lsp.buf.implementation, "implementations")   -- find implementations
+        map("n", "K", vim.lsp.buf.hover, "Hover")                       -- hover documentation
+        map("i", "<C-k>", vim.lsp.buf.signature_help, "signature help") -- signature help
+        map("n", "<leader>lr", vim.lsp.buf.rename, "Rename")            -- rename symbol
+        map("n", "<leader>la", vim.lsp.buf.code_action, "Code action")  -- code actions
         map("n", "<leader>f", function()
-            vim.lsp.buf.format({ async = true })                       -- LSP format current buffer
+            vim.lsp.buf.format({ async = true })                        -- LSP format current buffer
         end, "Format")
     end,
 })

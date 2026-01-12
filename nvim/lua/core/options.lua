@@ -53,4 +53,6 @@ vim.opt.clipboard = "unnamedplus" -- use system clipboard
 -- ===============================================================
 -- Completion
 -- ===============================================================
-vim.opt.completeopt = { "menu", "menuone", "noselect" } -- completion menu behavior
+vim.schedule(function()
+    vim.opt.completeopt = { "menu", "menuone", "noselect" } -- completion menu behavior
+end)
