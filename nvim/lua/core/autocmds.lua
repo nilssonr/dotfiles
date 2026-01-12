@@ -50,3 +50,13 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.treesitter.start() -- start tree-sitter highlighting
     end,
 })
+
+
+-- ===============================================================
+-- Ensure that the first item is selected in auto completes
+-- ===============================================================
+vim.api.nvim_create_autocmd("InsertEnter", {
+    callback = function()
+        vim.opt.completeopt = { "menu", "menuone", "noinsert" }
+    end,
+})
