@@ -161,3 +161,7 @@ zstyle ':completion:*' list-colors 'di=34:ln=36:ex=32'
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+
+fpath=(./completions $fpath)
+autoload -Uz compinit
+compinit
