@@ -104,6 +104,10 @@ function M.setup()
             cmd = { "vscode-json-languageserver", "--stdio" }, -- JSON language server
             filetypes = { "json", "jsonc" },                   -- JSON filetypes
         },
+        bashls = {
+            cmd = { "bash-language-server", "start" }, -- Bash language server
+            filetypes = { "sh", "bash", "zsh" },        -- Shell filetypes
+        },
         lua_ls = {
             cmd = { "lua-language-server" }, -- Lua language server
             filetypes = { "lua" },           -- Lua filetypes

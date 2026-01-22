@@ -153,6 +153,7 @@ Then inside Neovim:
 
 Language servers, debuggers, and Roslyn install steps are documented in:
 - `nvim/README.md`
+Includes `bash-language-server` for `sh`/`bash`/`zsh`.
 
 ### 10) yabai + skhd (macOS)
 
@@ -263,4 +264,3 @@ nvim --headless -u NONE -c "lua dofile('nvim/tests/angular_lsp.lua')" -c "qa"
 
 - Homebrew: `brew update && brew upgrade`
 - Neovim plugins: `:Lazy update` (commit the updated `nvim/lazy-lock.json`)
-

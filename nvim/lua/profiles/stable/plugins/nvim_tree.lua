@@ -155,7 +155,7 @@ return {
             },
 
             update_focused_file = {
-                enable = false,       -- default: false (do not auto-focus file)
+                enable = true,        -- default: false (do not auto-focus file)
                 update_root = {
                     enable = false,   -- default: false (do not update root)
                     ignore_list = {}, -- default: {} (no ignore list)
