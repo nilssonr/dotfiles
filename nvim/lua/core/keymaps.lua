@@ -6,8 +6,8 @@ local map = vim.keymap.set -- keymap helper
 -- ===============================================================
 -- Basic
 -- ===============================================================
-map("n", "<leader>w", "<cmd>w<cr>", { desc = "Write" }) -- save buffer
-map("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit" }) -- quit window
+map("n", "<leader>w", "<cmd>w<cr>", { desc = "Write" })              -- save buffer
+map("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit" })               -- quit window
 map("n", "<leader>Q", "<cmd>qa!<cr>", { desc = "Quit all (force)" }) -- quit all without prompts
 
 -- ===============================================================
@@ -17,11 +17,16 @@ map("x", "x", '"_d', { desc = "Delete without yanking" }) -- visual delete to bl
 map("x", "X", '"_d', { desc = "Delete without yanking" }) -- visual delete to black hole
 
 -- ===============================================================
+-- Buffers
+-- ===============================================================
+map("n", "<leader>bd", "<cmd>bd<cr>")
+
+-- ===============================================================
 -- Diagnostics
 -- ===============================================================
 map("n", "<leader>e", vim.diagnostic.open_float, { desc = "Diagnostics float" }) -- show diagnostic popup
-map("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" }) -- previous diagnostic
-map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" }) -- next diagnostic
+map("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })           -- previous diagnostic
+map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })           -- next diagnostic
 
 -- ===============================================================
 -- Formatting
@@ -49,13 +54,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
             vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc }) -- buffer-local map helper
         end
 
-        map("n", "gd", vim.lsp.buf.definition, "go to definition")     -- jump to definition
-        map("n", "gr", vim.lsp.buf.references, "references")           -- list references
-        map("n", "K", vim.lsp.buf.hover, "Hover")                      -- hover documentation
-        map("n", "<leader>lr", vim.lsp.buf.rename, "Rename")           -- rename symbol
-        map("n", "<leader>la", vim.lsp.buf.code_action, "Code action") -- code actions
+        map("n", "gd", vim.lsp.buf.definition, "go to definition")      -- jump to definition
+        map("n", "gr", vim.lsp.buf.references, "references")            -- list references
+        map("n", "gI", vim.lsp.buf.implementation, "implementations")   -- find implementations
+        map("n", "K", vim.lsp.buf.hover, "Hover")                       -- hover documentation
+        map("i", "<C-k>", vim.lsp.buf.signature_help, "signature help") -- signature help
+        map("n", "<leader>lr", vim.lsp.buf.rename, "Rename")            -- rename symbol
+        map("n", "<leader>la", vim.lsp.buf.code_action, "Code action")  -- code actions
         map("n", "<leader>f", function()
-            vim.lsp.buf.format({ async = true })                       -- LSP format current buffer
+            vim.lsp.buf.format({ async = true })                        -- LSP format current buffer
         end, "Format")
     end,
 })

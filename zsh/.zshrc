@@ -202,3 +202,6 @@ export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
       codex-dev
   }
 
+fpath=(./completions $fpath)
+autoload -Uz compinit
+compinit
