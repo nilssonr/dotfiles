@@ -28,7 +28,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 -- ===============================================================
 -- Tree-sitter highlighting per filetype
 -- ===============================================================
--- Tree-sitter highlighting is enabled by Neovim and must be started per filetype
 vim.api.nvim_create_autocmd("FileType", {
     pattern = {
         "lua",
@@ -48,6 +47,27 @@ vim.api.nvim_create_autocmd("FileType", {
     },
     callback = function()
         vim.treesitter.start() -- start tree-sitter highlighting
+    end,
+})
+
+-- ===============================================================
+-- Close quickfix/location list after selecting an entry
+-- ===============================================================
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "qf",
+    callback = function()
+        vim.keymap.set("n", "<CR>", function()
+            local wininfo = vim.fn.getwininfo(vim.api.nvim_get_current_win())[1] or {}
+            local is_loclist = wininfo.loclist == 1
+
+            vim.cmd("normal! <CR>")
+
+            if is_loclist then
+                vim.cmd("lclose")
+            else
+                vim.cmd("cclose")
+            end
+        end, { buffer = true, silent = true })
     end,
 })
 
