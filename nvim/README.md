@@ -101,6 +101,10 @@ npm i -g typescript typescript-language-server
 
 npm i -g @angular/language-server
 
+### Bash / Zsh
+
+npm i -g bash-language-server
+
 ### JSON
 
 npm i -g vscode-json-languageserver
@@ -221,6 +225,7 @@ command -v nvim rg fd fzf
 command -v gopls rust-analyzer
 command -v node
 command -v ngserver
+command -v bash-language-server
 command -v dlv netcoredbg
 command -v lua-language-server
 

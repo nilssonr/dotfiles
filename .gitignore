@@ -11,4 +11,5 @@ zsh/.zshrc.pre-oh-my-zsh
 zsh/oh-my-zsh/
 docs/
 nvim/docs/
+argocd/
 .nvimlog
