@@ -96,6 +96,7 @@ alias ...='cd ../..'
 alias lg='lazygit'
 alias k='kubectl'
 alias kx='kubectx'
+alias kns='kubens'
 alias vim='nvim'
 
 # ===============================================================
@@ -161,6 +162,45 @@ zstyle ':completion:*' list-colors 'di=34:ln=36:ex=32'
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+
+  ca() {
+    # Ensure we are in a directory
+    if [ ! -d "$PWD" ]; then
+      echo "Not a directory."
+      return 1
+    fi
+
+    # Optional: ensure it's a git repo
+    if [ ! -d "$PWD/.git" ]; then
+      echo "Not a git repository: $PWD"
+      return 1
+    fi
+
+    # Use repo name to create a stable volume name
+    local repo_name
+    repo_name="$(basename "$PWD")"
+    local home_vol="codex-${repo_name}-home"
+
+    # Pull token from host keychain
+    local gh_token
+    gh_token="$(gh auth token -h github.com 2>/dev/null || true)"
+    if [ -z "$gh_token" ]; then
+      echo "No GitHub token on host. Run: gh auth login -h github.com"
+      return 1
+    fi
+
+    docker run -it --rm \
+      -w /workspace \
+      -e CODEX_HOME=/home/codex/.codex \
+      -e GH_TOKEN="$gh_token" \
+      -v "$PWD:/workspace" \
+      -v "${home_vol}:/home/codex" \
+      -v "$HOME/.codex:/codex-host:ro" \
+      -v "$HOME/.config/gh:/home/codex/.config/gh:ro" \
+      -v "$HOME/.ssh/id_ed25519:/sshkeys/id_ed25519:ro" \
+      -v "$HOME/.ssh/id_ed25519.pub:/sshkeys/id_ed25519.pub:ro" \
+      codex-dev
+  }
 
 fpath=(./completions $fpath)
 autoload -Uz compinit
