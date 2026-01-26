@@ -9,6 +9,7 @@ local map = vim.keymap.set -- keymap helper
 map("n", "<leader>w", "<cmd>w<cr>", { desc = "Write" })              -- save buffer
 map("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit" })               -- quit window
 map("n", "<leader>Q", "<cmd>qa!<cr>", { desc = "Quit all (force)" }) -- quit all without prompts
+map("n", "<leader>ni", "<cmd>Neorg index<cr>", { desc = "Neorg index" })     -- open Neorg index
 
 -- ===============================================================
 -- Editing

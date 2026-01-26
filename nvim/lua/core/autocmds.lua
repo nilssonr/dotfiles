@@ -44,9 +44,21 @@ vim.api.nvim_create_autocmd("FileType", {
         "cs",
         "c_sharp",
         "xml",
+        "norg",
     },
     callback = function()
         vim.treesitter.start() -- start tree-sitter highlighting
+    end,
+})
+
+-- ===============================================================
+-- Neorg conceal tweaks
+-- ===============================================================
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "norg",
+    callback = function()
+        vim.opt_local.conceallevel = 2
+        vim.opt_local.concealcursor = "nc"
     end,
 })
 
