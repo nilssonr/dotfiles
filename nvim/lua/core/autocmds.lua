@@ -71,8 +71,9 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set("n", "<CR>", function()
             local wininfo = vim.fn.getwininfo(vim.api.nvim_get_current_win())[1] or {}
             local is_loclist = wininfo.loclist == 1
+            local line = vim.fn.line(".")
 
-            vim.cmd("normal! <CR>")
+            vim.cmd((is_loclist and "ll " or "cc ") .. line)
 
             if is_loclist then
                 vim.cmd("lclose")
