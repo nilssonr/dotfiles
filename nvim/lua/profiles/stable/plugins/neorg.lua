@@ -1,10 +1,7 @@
--- ===============================================================
--- Neorg
--- ===============================================================
 return {
   "nvim-neorg/neorg",
-  version = "*", -- recommended to stay on a stable release
-  lazy = false, -- Neorg discourages lazy-loading
+  version = "*",
+  lazy = false,
   config = function()
     require("neorg").setup({
       load = {

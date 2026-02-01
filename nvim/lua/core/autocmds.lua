@@ -1,59 +1,18 @@
--- ===============================================================
--- Autocommands
--- ===============================================================
-
--- ===============================================================
--- Highlight on yank
--- ===============================================================
 vim.api.nvim_create_autocmd("TextYankPost", {
     callback = function()
-        vim.highlight.on_yank({ timeout = 120 }) -- brief highlight of yanked text
+        vim.highlight.on_yank({ timeout = 120 })
     end,
 })
 
--- ===============================================================
--- Format on save (explicit, predictable)
--- ===============================================================
 vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function()
-        -- Only format real file buffers
         if vim.bo.buftype ~= "" then
             return
         end
-
-        require("core.format").format_current_buffer() -- format before write
+        require("core.format").format_current_buffer()
     end,
 })
 
--- ===============================================================
--- Tree-sitter highlighting per filetype
--- ===============================================================
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = {
-        "lua",
-        "typescript",
-        "typescriptreact",
-        "javascript",
-        "javascriptreact",
-        "json",
-        "jsonc",
-        "yaml",
-        "toml",
-        "go",
-        "rust",
-        "cs",
-        "c_sharp",
-        "xml",
-        "norg",
-    },
-    callback = function()
-        vim.treesitter.start() -- start tree-sitter highlighting
-    end,
-})
-
--- ===============================================================
--- Neorg conceal tweaks
--- ===============================================================
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "norg",
     callback = function()
@@ -62,9 +21,6 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
--- ===============================================================
--- Close quickfix/location list after selecting an entry
--- ===============================================================
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "qf",
     callback = function()
@@ -84,10 +40,7 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
-
--- ===============================================================
--- Ensure that the first item is selected in auto completes
--- ===============================================================
+-- Ensure first item is selected in completion menu
 vim.api.nvim_create_autocmd("InsertEnter", {
     callback = function()
         vim.opt.completeopt = { "menu", "menuone", "noinsert" }

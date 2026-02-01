@@ -1,15 +1,12 @@
--- ===============================================================
--- Diagnostics
--- ===============================================================
-local M = {} -- module table
+local M = {}
 
 function M.setup()
     vim.diagnostic.config({
-        virtual_text = false,                               -- show diagnostics inline
-        underline = true,                                   -- underline problematic text
-        severity_sort = true,                               -- sort diagnostics by severity
-        update_in_insert = false,                           -- don't update while inserting
-        float = { border = "rounded", source = "if_many" }, -- floating window style
+        virtual_text = false,
+        underline = true,
+        severity_sort = true,
+        update_in_insert = false,
+        float = { border = "rounded", source = "if_many" },
         virtual_lines = { underline = true }
     })
 end

@@ -13,3 +13,4 @@ docs/
 nvim/docs/
 argocd/
 .nvimlog
+gh/hosts.yml

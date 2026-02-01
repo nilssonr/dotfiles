@@ -172,6 +172,8 @@ brew services start skhd
 
 You must also grant Accessibility permissions to yabai/skhd (System Settings → Privacy & Security → Accessibility).
 
+**Note:** The space-movement keybindings (`alt+shift - 1..5` in `skhd/skhdrc`) require the yabai scripting addition to be enabled. See the [yabai wiki](https://github.com/koekeishiya/yabai/wiki/Installing-yabai-(latest-release)#configure-scripting-addition) for setup instructions.
+
 ---
 
 ## Keybindings (cheatsheet)
