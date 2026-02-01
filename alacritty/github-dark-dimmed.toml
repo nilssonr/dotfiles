@@ -1,43 +1,27 @@
-# ===============================================================
-# GitHub Dark Dimmed Palette
-# ===============================================================
-
-# ===============================================================
-# Primary Colors
-# ===============================================================
 [colors.primary]
-background = "#22272e" # main background
-foreground = "#adbac7" # main foreground text
+background = "#22272e"
+foreground = "#adbac7"
 
-# ===============================================================
-# Cursor Colors
-# ===============================================================
 [colors.cursor]
-text = "#22272e" # cursor text color
-cursor = "#adbac7" # cursor block color
+text = "#22272e"
+cursor = "#adbac7"
 
-# ===============================================================
-# Normal ANSI Colors
-# ===============================================================
 [colors.normal]
-black = "#545d68" # normal black
-red = "#f47067" # normal red
-green = "#57ab5a" # normal green
-yellow = "#c69026" # normal yellow
-blue = "#539bf5" # normal blue
-magenta = "#b083f0" # normal magenta
-cyan = "#39c5cf" # normal cyan
-white = "#909dab" # normal white
+black = "#545d68"
+red = "#f47067"
+green = "#57ab5a"
+yellow = "#c69026"
+blue = "#539bf5"
+magenta = "#b083f0"
+cyan = "#39c5cf"
+white = "#909dab"
 
-# ===============================================================
-# Bright ANSI Colors
-# ===============================================================
 [colors.bright]
-black = "#636e7b" # bright black
-red = "#ff938a" # bright red
-green = "#6bc46d" # bright green
-yellow = "#daaa3f" # bright yellow
-blue = "#6cb6ff" # bright blue
-magenta = "#b083f0" # bright magenta
-cyan = "#39c5cf" # bright cyan
-white = "#909dab" # bright white
+black = "#636e7b"
+red = "#ff938a"
+green = "#6bc46d"
+yellow = "#daaa3f"
+blue = "#6cb6ff"
+magenta = "#b083f0"
+cyan = "#39c5cf"
+white = "#909dab"
