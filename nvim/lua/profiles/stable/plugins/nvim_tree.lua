@@ -79,13 +79,13 @@ return {
                 highlight_bookmarks = "none",    -- default: "none" (no bookmark highlight)
                 highlight_clipboard = "name",    -- default: "name" (highlight clipboard by name)
                 indent_markers = {
-                    enable = false,              -- default: false (no indent markers)
+                    enable = true,               -- default: false (no indent markers)
                     inline_arrows = true,        -- default: true (inline arrows)
                     icons = {
-                        corner = "`",            -- default: "└" (corner glyph), override to "`"
-                        edge = "|",              -- default: "│" (edge glyph), override to "|"
-                        item = "|",              -- default: "│" (item glyph), override to "|"
-                        bottom = "-",            -- default: "─" (bottom glyph), override to "-"
+                        corner = "└",            -- default: "└" (corner glyph)
+                        edge = "│",              -- default: "│" (edge glyph)
+                        item = "│",              -- default: "│" (item glyph)
+                        bottom = "─",            -- default: "─" (bottom glyph)
                         none = " ",              -- default: " " (empty glyph)
                     },
                 },
@@ -127,12 +127,12 @@ return {
                         modified = "~",         -- default: "●" (modified glyph), override to "~"
                         hidden = ".",           -- default: "󰜌" (hidden glyph), override to "."
                         folder = {
-                            arrow_closed = ">", -- default: "" (closed arrow), override to ">"
-                            arrow_open = "v",   -- default: "" (open arrow), override to "v"
-                            default = "+",      -- default: "" (folder glyph), override to "+"
-                            open = "-",         -- default: "" (open folder glyph), override to "-"
-                            empty = "+",        -- default: "" (empty folder glyph), override to "+"
-                            empty_open = "-",   -- default: "" (empty open folder glyph), override to "-"
+                            arrow_closed = "▸", -- default: "" (closed arrow), override to "▸"
+                            arrow_open = "▾",   -- default: "" (open arrow), override to "▾"
+                            default = "",      -- default: "" (folder glyph)
+                            open = "",         -- default: "" (open folder glyph)
+                            empty = "",        -- default: "" (empty folder glyph)
+                            empty_open = "",   -- default: "" (empty open folder glyph)
                             symlink = "@",      -- default: "" (symlink folder glyph), override to "@"
                             symlink_open = "@", -- default: "" (symlink open folder glyph), override to "@"
                         },
@@ -203,12 +203,18 @@ return {
 
             filters = {
                 enable = true,       -- default: true (enable filters)
-                git_ignored = true,  -- default: true (hide git ignored)
+                git_ignored = false, -- default: true (hide git ignored)
                 dotfiles = false,    -- default: false (show dotfiles)
                 git_clean = false,   -- default: false (show git-clean)
                 no_buffer = false,   -- default: false (do not hide no-buffer files)
                 no_bookmark = false, -- default: false (show bookmarks)
-                custom = {},         -- default: {} (no custom filters)
+                custom = {           -- custom hidden entries
+                    "^\\.git$",      -- hide .git dir
+                    "node_modules",  -- hide node_modules
+                    "^\\.worktrees$", -- hide .worktrees
+                    "^dist$",        -- hide dist folders at any depth
+                    "^bin$",         -- hide bin folders at any depth
+                },
                 exclude = {},        -- default: {} (no exclude overrides)
             },
 
