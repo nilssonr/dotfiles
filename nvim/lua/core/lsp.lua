@@ -101,8 +101,14 @@ function M.setup()
             filetypes = { "toml" },            -- TOML filetypes
         },
         jsonls = {
-            cmd = { "vscode-json-languageserver", "--stdio" }, -- JSON language server
+            cmd = { "vscode-json-language-server", "--stdio" }, -- JSON language server
             filetypes = { "json", "jsonc" },                   -- JSON filetypes
+            settings = {
+                json = {
+                    format = { enable = true },   -- enable server formatting
+                    validate = { enable = true }, -- enable validation
+                },
+            },
         },
         bashls = {
             cmd = { "bash-language-server", "start" }, -- Bash language server
