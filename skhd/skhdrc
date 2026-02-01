@@ -1,55 +1,41 @@
-# ===============================================================
-# Application Launch
-# ===============================================================
-cmd + alt - 0x24 : alacritty # launch Alacritty (Return key)
+# Launch
+cmd + alt - 0x24 : alacritty
 
-# ===============================================================
-# Focus Navigation
-# ===============================================================
-alt - h : yabai -m window --focus west # focus west window
-alt - j : yabai -m window --focus south # focus south window
-alt - k : yabai -m window --focus north # focus north window
-alt - l : yabai -m window --focus east # focus east window
+# Focus
+alt - h : yabai -m window --focus west
+alt - j : yabai -m window --focus south
+alt - k : yabai -m window --focus north
+alt - l : yabai -m window --focus east
 
-# ===============================================================
-# Move Windows
-# ===============================================================
-shift + alt - h : yabai -m window --warp west # move window west
-shift + alt - j : yabai -m window --warp south # move window south
-shift + alt - k : yabai -m window --warp north # move window north
-shift + alt - l : yabai -m window --warp east # move window east
+# Move
+shift + alt - h : yabai -m window --warp west
+shift + alt - j : yabai -m window --warp south
+shift + alt - k : yabai -m window --warp north
+shift + alt - l : yabai -m window --warp east
 
-# ===============================================================
-# Resize Windows
-# ===============================================================
+# Resize
 lctrl + alt - h : yabai -m window --resize left:-50:0; \
-                  yabai -m window --resize right:-50:0 # resize horizontally (shrink)
+                  yabai -m window --resize right:-50:0
 lctrl + alt - j : yabai -m window --resize bottom:0:50; \
-                  yabai -m window --resize top:0:50 # resize vertically (shrink)
+                  yabai -m window --resize top:0:50
 lctrl + alt - k : yabai -m window --resize top:0:-50; \
-                  yabai -m window --resize bottom:0:-50 # resize vertically (grow)
+                  yabai -m window --resize bottom:0:-50
 lctrl + alt - l : yabai -m window --resize right:50:0; \
-                  yabai -m window --resize left:50:0 # resize horizontally (grow)
+                  yabai -m window --resize left:50:0
 
-# ===============================================================
-# Move to Workspace
-# ===============================================================
-alt + shift - 1 : yabai -m window --space 1 # send window to space 1
-alt + shift - 2 : yabai -m window --space 2 # send window to space 2
-alt + shift - 3 : yabai -m window --space 3 # send window to space 3
-alt + shift - 4 : yabai -m window --space 4 # send window to space 4
-alt + shift - 5 : yabai -m window --space 5 # send window to space 5
+# Move to space (requires yabai scripting addition)
+alt + shift - 1 : yabai -m window --space 1
+alt + shift - 2 : yabai -m window --space 2
+alt + shift - 3 : yabai -m window --space 3
+alt + shift - 4 : yabai -m window --space 4
+alt + shift - 5 : yabai -m window --space 5
 
-# ===============================================================
-# Layout Controls
-# ===============================================================
-lctrl + alt - e : yabai -m space --balance # equalize window sizes
+# Layout
+lctrl + alt - e : yabai -m space --balance
 
-# Float / Unfloat window
 shift + alt - space : \
     yabai -m window --toggle float; \
-    yabai -m window --toggle border # toggle floating + border
+    yabai -m window --toggle border
 
-# Make window fullscreen
-alt - f         : yabai -m window --toggle zoom-fullscreen # native zoom fullscreen
-shift + alt - f : yabai -m window --toggle native-fullscreen # macOS native fullscreen
+alt - f         : yabai -m window --toggle zoom-fullscreen
+shift + alt - f : yabai -m window --toggle native-fullscreen
