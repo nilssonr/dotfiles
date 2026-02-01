@@ -1,3 +1,4 @@
+-- Only non-default values — see nvim-tree docs for full option list
 return {
     "nvim-tree/nvim-tree.lua",
     lazy = false,
@@ -9,11 +10,13 @@ return {
             renderer = {
                 indent_markers = { enable = true },
                 icons = {
+                    -- Disable devicons (text-only UI)
                     web_devicons = {
                         file = { enable = false, color = false },
                         folder = { enable = false, color = false },
                     },
                     symlink_arrow = " -> ",
+                    -- ASCII glyphs instead of nerd-font icons
                     glyphs = {
                         default = "-",
                         symlink = "@",

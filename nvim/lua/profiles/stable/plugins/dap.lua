@@ -25,6 +25,7 @@ return {
     local dap = require("dap")
     local dapui = require("dapui")
 
+    -- .env file reader for injecting env vars into debug sessions
     local function read_env_file(path)
       if vim.fn.filereadable(path) ~= 1 then
         return {}
@@ -60,26 +61,24 @@ return {
       return env
     end
 
-    local adapters = {
-      go = {
-        type = "server",
-        host = "127.0.0.1",
-        port = "${port}",
-        executable = {
-          command = "dlv",
-          args = { "dap", "-l", "127.0.0.1:${port}" },
-        },
-      },
-      coreclr = {
-        type = "executable",
-        command = "netcoredbg",
-        args = { "--interpreter=vscode" },
+    -- Adapters
+    dap.adapters.go = {
+      type = "server",
+      host = "127.0.0.1",
+      port = "${port}",
+      executable = {
+        command = "dlv",
+        args = { "dap", "-l", "127.0.0.1:${port}" },
       },
     }
 
-    dap.adapters.go = adapters.go
-    dap.adapters.coreclr = adapters.coreclr
+    dap.adapters.coreclr = {
+      type = "executable",
+      command = "netcoredbg",
+      args = { "--interpreter=vscode" },
+    }
 
+    -- Go configurations
     dap.configurations.go = {
       {
         type = "go",
@@ -110,6 +109,7 @@ return {
       },
     }
 
+    -- C# configurations
     dap.configurations.cs = {
       {
         type = "coreclr",
@@ -121,6 +121,7 @@ return {
       },
     }
 
+    -- JS/TS via vscode-js-debug
     local js_debug_path = vim.fn.stdpath("data") .. "/dap/vscode-js-debug"
     if vim.fn.isdirectory(js_debug_path) ~= 1 then
       util.warn(("Missing vscode-js-debug at %s. See README.md for install steps."):format(js_debug_path))
@@ -145,6 +146,7 @@ return {
     dap.configurations.typescript = { node_launch }
     dap.configurations.javascript = { node_launch }
 
+    -- Auto-open/close DAP UI with debug session lifecycle
     dapui.setup()
     dap.listeners.after.event_initialized["dapui_config"] = function()
       dapui.open()

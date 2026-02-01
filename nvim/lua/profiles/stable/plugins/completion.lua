@@ -9,6 +9,7 @@ return {
     config = function()
         local cmp = require("cmp")
 
+        -- Manual trigger (mimics omni-complete)
         vim.keymap.set("i", "<C-x><C-o>", function()
             cmp.complete()
         end, { silent = true })
@@ -20,6 +21,8 @@ return {
                     -- No snippets by design
                 end,
             },
+
+            -- Keybindings
             mapping = cmp.mapping.preset.insert({
                 ["<C-Space>"] = cmp.mapping.complete(),
                 ["<C-e>"] = cmp.mapping.abort(),
@@ -47,11 +50,15 @@ return {
                     end
                 end, { "i", "s" }),
             }),
+
+            -- Sources (priority order)
             sources = cmp.config.sources({
                 { name = "nvim_lsp" },
                 { name = "path" },
                 { name = "buffer" },
             }),
+
+            -- No icons — plain text menu
             formatting = {
                 format = function(_, item)
                     item.menu = ""

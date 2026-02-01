@@ -1,23 +1,28 @@
 local map = vim.keymap.set
 
+-- Basic
 map("n", "<leader>w", "<cmd>w<cr>", { desc = "Write" })
 map("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit" })
 map("n", "<leader>Q", "<cmd>qa!<cr>", { desc = "Quit all (force)" })
 map("n", "<leader>ni", "<cmd>Neorg index<cr>", { desc = "Neorg index" })
 
+-- Delete to black hole so yanked text isn't overwritten
 map("x", "x", '"_d', { desc = "Delete without yanking" })
 map("x", "X", '"_d', { desc = "Delete without yanking" })
 
 map("n", "<leader>bd", "<cmd>bd<cr>")
 
+-- Diagnostics
 map("n", "<leader>e", vim.diagnostic.open_float, { desc = "Diagnostics float" })
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 
+-- Format — routes through core.format which handles XML specially, falls back to LSP
 map("n", "<leader>f", function()
     require("core.format").format_current_buffer()
 end, { desc = "Format buffer" })
 
+-- LSP keymaps (buffer-local, set once per buffer)
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(args)
         local bufnr = args.buf
@@ -25,7 +30,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
         if vim.b[bufnr].lsp_keymaps then
             return
         end
-
         vim.b[bufnr].lsp_keymaps = true
 
         local bmap = function(mode, lhs, rhs, desc)
@@ -42,8 +46,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end,
 })
 
+-- Terminal
 map("t", "<Esc>", "<C-\\><C-n>", { desc = "Terminal normal mode" })
 
+-- Lazygit in a centered floating terminal
 local function open_lazygit()
     if vim.fn.executable("lazygit") ~= 1 then
         vim.notify("lazygit not found in PATH", vim.log.levels.ERROR)

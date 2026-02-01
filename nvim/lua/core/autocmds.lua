@@ -1,9 +1,11 @@
+-- Briefly highlight yanked text
 vim.api.nvim_create_autocmd("TextYankPost", {
     callback = function()
         vim.highlight.on_yank({ timeout = 120 })
     end,
 })
 
+-- Format on save (only real file buffers)
 vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function()
         if vim.bo.buftype ~= "" then
@@ -13,6 +15,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     end,
 })
 
+-- Neorg needs conceallevel for rendering
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "norg",
     callback = function()
@@ -21,6 +24,7 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
+-- Close quickfix/location list after selecting an entry
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "qf",
     callback = function()
@@ -40,7 +44,7 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
--- Ensure first item is selected in completion menu
+-- Ensure first completion item is selected (reinforces options.lua setting)
 vim.api.nvim_create_autocmd("InsertEnter", {
     callback = function()
         vim.opt.completeopt = { "menu", "menuone", "noinsert" }

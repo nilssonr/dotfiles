@@ -1,5 +1,6 @@
 local M = {}
 
+-- Scan monorepo packages/ for Angular probe locations
 local function list_package_dirs(root)
     local packages_dir = root .. "/packages"
     local dirs = {}
@@ -35,6 +36,7 @@ function M.setup()
     local util = require("core.util")
     local capabilities = vim.lsp.protocol.make_client_capabilities()
 
+    -- Merge cmp_nvim_lsp capabilities when available
     local ok, cmp = pcall(require, "cmp_nvim_lsp")
     if ok and cmp and type(cmp.default_capabilities) == "function" then
         capabilities = cmp.default_capabilities(capabilities)
@@ -43,6 +45,7 @@ function M.setup()
     -- No snippets by design
     capabilities.textDocument.completion.completionItem.snippetSupport = false
 
+    -- Server definitions — edit this table to add/remove servers
     local servers = {
         gopls = {
             cmd = { "gopls" },
@@ -65,7 +68,6 @@ function M.setup()
         angularls = {
             cmd = function(dispatchers, config)
                 local root_dir = config.root_dir or vim.fn.getcwd()
-
                 local probes = angular_probe_locations(root_dir)
                 local probe_arg = table.concat(probes, ",")
 
@@ -80,7 +82,6 @@ function M.setup()
 
                 return vim.lsp.rpc.start(cmd, dispatchers, { cwd = root_dir })
             end,
-
             filetypes = { "typescript", "typescriptreact", "html" },
             root_markers = { "angular.json", "project.json" },
             workspace_required = true,
@@ -128,6 +129,7 @@ function M.setup()
         cfg.capabilities = capabilities
 
         if type(cfg.cmd) == "table" and cfg.cmd[1] and not util.executable(cfg.cmd[1]) then
+            -- Silently skip missing binaries
         end
 
         vim.lsp.config[name] = cfg
