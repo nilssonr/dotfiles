@@ -107,7 +107,9 @@ npm i -g bash-language-server
 
 ### JSON
 
-npm i -g vscode-json-languageserver
+npm i -g vscode-langservers-extracted
+
+Binary provided: `vscode-json-language-server`
 
 ### YAML
 
@@ -226,6 +228,7 @@ command -v gopls rust-analyzer
 command -v node
 command -v ngserver
 command -v bash-language-server
+command -v vscode-json-language-server
 command -v dlv netcoredbg
 command -v lua-language-server
 
