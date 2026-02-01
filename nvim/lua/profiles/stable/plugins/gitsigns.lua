@@ -2,6 +2,7 @@ return {
     "lewis6991/gitsigns.nvim",
     event = { "BufReadPre", "BufNewFile" },
     opts = {
+        -- Plain text signs (no nerd-font icons)
         signs = {
             add = { text = "|" },
             change = { text = "|" },

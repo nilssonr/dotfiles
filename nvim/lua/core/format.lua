@@ -7,6 +7,7 @@ end
 function M.format_current_buffer()
     local ft = vim.bo.filetype
 
+    -- XML: use xmllint (LSP formatters don't handle XML well)
     if ft == "xml" then
         if not has("xmllint") then
             vim.notify("xmllint not found on PATH", vim.log.levels.WARN)
@@ -28,6 +29,7 @@ function M.format_current_buffer()
 
         local out = result.stdout or ""
         local new_lines = vim.split(out, "\n", { plain = true })
+        -- Don't insert an XML declaration if the original didn't have one
         if not has_decl and #new_lines > 0 and new_lines[1]:match("^%s*<%?xml") then
             table.remove(new_lines, 1)
         end
@@ -39,6 +41,7 @@ function M.format_current_buffer()
         return
     end
 
+    -- Everything else: LSP format
     vim.lsp.buf.format({ async = false, timeout_ms = 5000 })
 end
 

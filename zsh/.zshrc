@@ -1,3 +1,4 @@
+# Oh My Zsh
 export ZDOTDIR="${ZDOTDIR:-$HOME/.config/zsh}"
 export ZSH="$ZDOTDIR/oh-my-zsh"
 
@@ -5,6 +6,7 @@ ZSH_THEME="robbyrussell"
 plugins=(git fzf zsh-autosuggestions)
 source "$ZSH/oh-my-zsh.sh"
 
+# Refresh prompt on directory change so git status updates immediately
 setopt PROMPT_SUBST
 
 autoload -Uz add-zsh-hook
@@ -16,7 +18,7 @@ function _refresh_prompt_on_chpwd() {
 }
 add-zsh-hook chpwd _refresh_prompt_on_chpwd
 
-# pnpm
+# Environment / PATH
 export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
@@ -25,17 +27,17 @@ esac
 
 export PATH="$HOME/.local/bin:$PATH"
 
-# go bin
+# Avoid forking `go env` on every shell start
 export PATH="${GOPATH:-$HOME/go}/bin:$PATH"
 
+# Suppress Corepack interactive download prompt
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
-# fnm (Fast Node Manager)
 if command -v fnm >/dev/null 2>&1; then
   eval "$(fnm env --use-on-cd --shell zsh)"
 fi
 
-# Prompt — must be AFTER OMZ is sourced, otherwise theme overrides it.
+# Prompt — must be AFTER OMZ is sourced, otherwise the theme overrides it
 ZSH_THEME_GIT_PROMPT_PREFIX='%F{red}('
 ZSH_THEME_GIT_PROMPT_SUFFIX=')%f '
 ZSH_THEME_GIT_PROMPT_DIRTY='%F{yellow}*%f'
@@ -43,8 +45,10 @@ ZSH_THEME_GIT_PROMPT_CLEAN=''
 
 PROMPT='%F{blue}%~%f $(git_prompt_info)› '
 
+# ls colors: directories blue, symlinks cyan, executables green
 export LSCOLORS="exfxcxdxbxegedabagacad"
 
+# Aliases
 alias ll='ls -lah'
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -54,7 +58,7 @@ alias kx='kubectx'
 alias kns='kubens'
 alias vim='nvim'
 
-# Project picker (fzf) — workspace roots: ~/Code/*
+# Project picker — lists repos one level under ~/Code/*/
 function _cproj_select() {
   local -a candidates
   candidates=()
@@ -82,6 +86,7 @@ function cproj() {
 
 alias p='cproj'
 
+# Widget form (Ctrl-P) — updates prompt immediately after cd
 function _cproj_widget() {
   local selected
   selected="$(_cproj_select)" || { zle reset-prompt; return 0; }
@@ -96,6 +101,7 @@ function _cproj_widget() {
 zle -N _cproj_widget
 bindkey '^P' _cproj_widget
 
+# Completion
 zmodload -i zsh/complist
 zstyle ':completion:*' list-colors 'di=34:ln=36:ex=32'
 
