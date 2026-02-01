@@ -1,15 +1,12 @@
--- ===============================================================
--- which-key
--- ===============================================================
 return {
-  "folke/which-key.nvim", -- keybinding helper
-  event = "VeryLazy", -- load after startup
+  "folke/which-key.nvim",
+  event = "VeryLazy",
   opts = {
-    icons = { -- no icons
+    icons = {
       breadcrumb = "",
       separator = "",
       group = "",
     },
-    win = { border = "rounded" }, -- floating window border
+    win = { border = "rounded" },
   },
 }

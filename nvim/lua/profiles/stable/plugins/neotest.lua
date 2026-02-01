@@ -1,16 +1,9 @@
--- ===============================================================
--- Neotest
--- ===============================================================
 local function dotnet_suite_root()
   local cwd = vim.fn.getcwd()
   local repo = vim.fn.fnamemodify(cwd, ":t")
 
-  -- Per-repo overrides for non-standard layouts.
-  -- Example:
-  -- overrides["my-repo"] = "tests"
-  local overrides = {
-    -- ["repo-name"] = "path/for/dotnet/test/root",
-  }
+  -- Per-repo overrides for non-standard layouts
+  local overrides = {}
 
   local override = overrides[repo] or overrides[cwd]
   if override then
@@ -40,36 +33,12 @@ return {
     "Issafalcon/neotest-dotnet",
   },
   keys = {
-    {
-      "<leader>tn",
-      function() require("neotest").run.run() end,
-      desc = "Test nearest",
-    },
-    {
-      "<leader>tf",
-      function() require("neotest").run.run(vim.fn.expand("%")) end,
-      desc = "Test file",
-    },
-    {
-      "<leader>ts",
-      function() require("neotest").run.run(suite_root()) end,
-      desc = "Test suite",
-    },
-    {
-      "<leader>to",
-      function() require("neotest").output.open({ enter = true }) end,
-      desc = "Test output",
-    },
-    {
-      "<leader>tS",
-      function() require("neotest").summary.toggle() end,
-      desc = "Test summary",
-    },
-    {
-      "<leader>tr",
-      function() require("neotest").run.run_last() end,
-      desc = "Test last",
-    },
+    { "<leader>tn", function() require("neotest").run.run() end, desc = "Test nearest" },
+    { "<leader>tf", function() require("neotest").run.run(vim.fn.expand("%")) end, desc = "Test file" },
+    { "<leader>ts", function() require("neotest").run.run(suite_root()) end, desc = "Test suite" },
+    { "<leader>to", function() require("neotest").output.open({ enter = true }) end, desc = "Test output" },
+    { "<leader>tS", function() require("neotest").summary.toggle() end, desc = "Test summary" },
+    { "<leader>tr", function() require("neotest").run.run_last() end, desc = "Test last" },
   },
   config = function()
     require("neotest").setup({

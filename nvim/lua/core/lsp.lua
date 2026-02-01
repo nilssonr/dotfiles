@@ -1,19 +1,16 @@
--- ===============================================================
--- LSP Setup
--- ===============================================================
-local M = {} -- module table
+local M = {}
 
 local function list_package_dirs(root)
     local packages_dir = root .. "/packages"
     local dirs = {}
 
-    local handle = vim.loop.fs_scandir(packages_dir)
+    local handle = vim.uv.fs_scandir(packages_dir)
     if not handle then
         return dirs
     end
 
     while true do
-        local name, t = vim.loop.fs_scandir_next(handle)
+        local name, t = vim.uv.fs_scandir_next(handle)
         if not name then
             break
         end
@@ -35,39 +32,35 @@ local function angular_probe_locations(root)
 end
 
 function M.setup()
-    local util = require("core.util")                                -- shared helpers
-    local capabilities = vim.lsp.protocol.make_client_capabilities() -- base lsp capabilities
+    local util = require("core.util")
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
 
-    -- merge cmp_nvim_lsp capabilities when available
-    local ok, cmp = pcall(require, "cmp_nvim_lsp")            -- optional completion integration
+    local ok, cmp = pcall(require, "cmp_nvim_lsp")
     if ok and cmp and type(cmp.default_capabilities) == "function" then
-        capabilities = cmp.default_capabilities(capabilities) -- extend capabilities for cmp
+        capabilities = cmp.default_capabilities(capabilities)
     end
 
-    capabilities.textDocument.completion.completionItem.snippetSupport = false -- disable snippet completions
+    -- No snippets by design
+    capabilities.textDocument.completion.completionItem.snippetSupport = false
 
-    -- ===========================================================
-    -- Server Definitions
-    -- ===========================================================
-    -- Edit ONE table to add/remove servers
     local servers = {
         gopls = {
-            cmd = { "gopls" },                                 -- Go language server
-            filetypes = { "go", "gomod", "gowork", "gotmpl" }, -- Go filetypes
+            cmd = { "gopls" },
+            filetypes = { "go", "gomod", "gowork", "gotmpl" },
         },
         rust_analyzer = {
-            cmd = { "rust-analyzer" },                                                    -- Rust language server
-            filetypes = { "rust" },                                                       -- Rust filetypes
+            cmd = { "rust-analyzer" },
+            filetypes = { "rust" },
             root_dir = function(bufnr)
-                local fname = vim.api.nvim_buf_get_name(bufnr)                            -- current file path
-                local dir = vim.fs.dirname(fname)                                         -- current directory
-                local cargo = vim.fs.find("Cargo.toml", { upward = true, path = dir })[1] -- find Cargo.toml
-                return cargo and vim.fs.dirname(cargo) or nil                             -- use Cargo root or nil
+                local fname = vim.api.nvim_buf_get_name(bufnr)
+                local dir = vim.fs.dirname(fname)
+                local cargo = vim.fs.find("Cargo.toml", { upward = true, path = dir })[1]
+                return cargo and vim.fs.dirname(cargo) or nil
             end,
         },
         ts_ls = {
-            cmd = { "typescript-language-server", "--stdio" },                                -- TypeScript/JS language server
-            filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" }, -- TS/JS filetypes
+            cmd = { "typescript-language-server", "--stdio" },
+            filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
         },
         angularls = {
             cmd = function(dispatchers, config)
@@ -93,68 +86,54 @@ function M.setup()
             workspace_required = true,
         },
         yamlls = {
-            cmd = { "yaml-language-server", "--stdio" }, -- YAML language server
-            filetypes = { "yaml", "yml" },               -- YAML filetypes
+            cmd = { "yaml-language-server", "--stdio" },
+            filetypes = { "yaml", "yml" },
         },
         taplo = {
-            cmd = { "taplo", "lsp", "stdio" }, -- TOML language server
-            filetypes = { "toml" },            -- TOML filetypes
+            cmd = { "taplo", "lsp", "stdio" },
+            filetypes = { "toml" },
         },
         jsonls = {
-            cmd = { "vscode-json-language-server", "--stdio" }, -- JSON language server
-            filetypes = { "json", "jsonc" },                   -- JSON filetypes
+            cmd = { "vscode-json-language-server", "--stdio" },
+            filetypes = { "json", "jsonc" },
             settings = {
                 json = {
-                    format = { enable = true },   -- enable server formatting
-                    validate = { enable = true }, -- enable validation
+                    format = { enable = true },
+                    validate = { enable = true },
                 },
             },
         },
         bashls = {
-            cmd = { "bash-language-server", "start" }, -- Bash language server
-            filetypes = { "sh", "bash", "zsh" },        -- Shell filetypes
+            cmd = { "bash-language-server", "start" },
+            filetypes = { "sh", "bash", "zsh" },
         },
         lua_ls = {
-            cmd = { "lua-language-server" }, -- Lua language server
-            filetypes = { "lua" },           -- Lua filetypes
+            cmd = { "lua-language-server" },
+            filetypes = { "lua" },
             settings = {
                 Lua = {
-                    runtime = {
-                        version = "LuaJIT", -- Neovim Lua runtime
-                    },
-                    diagnostics = {
-                        globals = { "vim" }, -- recognize Neovim globals
-                    },
+                    runtime = { version = "LuaJIT" },
+                    diagnostics = { globals = { "vim" } },
                     workspace = {
-                        library = {
-                            vim.env.VIMRUNTIME,  -- add runtime to library
-                        },
-                        checkThirdParty = false, -- disable third-party checks
+                        library = { vim.env.VIMRUNTIME },
+                        checkThirdParty = false,
                     },
-                    telemetry = {
-                        enable = false, -- disable telemetry
-                    },
+                    telemetry = { enable = false },
                 },
             },
         },
     }
 
-    -- ===========================================================
-    -- Register Servers
-    -- ===========================================================
     for name, cfg in pairs(servers) do
-        cfg.capabilities = capabilities -- apply shared capabilities
+        cfg.capabilities = capabilities
 
         if type(cfg.cmd) == "table" and cfg.cmd[1] and not util.executable(cfg.cmd[1]) then
-            -- Optional warning; keep quiet by default
-            -- util.warn(("Missing LSP binary for %s: %s"):format(name, cfg.cmd[1]))
         end
 
-        vim.lsp.config[name] = cfg -- register with Neovim LSP config table
+        vim.lsp.config[name] = cfg
     end
 
-    -- Enable all configured servers
-    vim.lsp.enable(vim.tbl_keys(servers)) -- activate servers
+    vim.lsp.enable(vim.tbl_keys(servers))
 end
 
 return M

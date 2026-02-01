@@ -1,71 +1,66 @@
--- ===============================================================
--- Completion (nvim-cmp)
--- ===============================================================
 return {
-    "hrsh7th/nvim-cmp",         -- completion engine
-    event = "InsertEnter",      -- lazy-load on first insert
+    "hrsh7th/nvim-cmp",
+    event = "InsertEnter",
     dependencies = {
-        "hrsh7th/cmp-nvim-lsp", -- LSP completion source
-        "hrsh7th/cmp-buffer",   -- buffer completion source
-        "hrsh7th/cmp-path",     -- path completion source
+        "hrsh7th/cmp-nvim-lsp",
+        "hrsh7th/cmp-buffer",
+        "hrsh7th/cmp-path",
     },
     config = function()
-        local cmp = require("cmp") -- completion module
-
+        local cmp = require("cmp")
 
         vim.keymap.set("i", "<C-x><C-o>", function()
             cmp.complete()
         end, { silent = true })
 
         cmp.setup({
-            preselect = cmp.PreselectMode.Item, -- visually selects the first item in the list
+            preselect = cmp.PreselectMode.Item,
             snippet = {
                 expand = function()
                     -- No snippets by design
                 end,
             },
             mapping = cmp.mapping.preset.insert({
-                ["<C-Space>"] = cmp.mapping.complete(), -- trigger completion
-                ["<C-e>"] = cmp.mapping.abort(),        -- close completion
+                ["<C-Space>"] = cmp.mapping.complete(),
+                ["<C-e>"] = cmp.mapping.abort(),
                 ["<CR>"] = cmp.mapping(function(fallback)
                     if cmp.visible() then
-                        cmp.confirm({ select = true }) -- confirm selected item
+                        cmp.confirm({ select = true })
                     else
-                        fallback()                     -- default Enter behavior
+                        fallback()
                     end
                 end, { "i", "s" }),
 
                 ["<Tab>"] = cmp.mapping(function(fallback)
                     if cmp.visible() then
-                        cmp.select_next_item() -- next completion item
+                        cmp.select_next_item()
                     else
-                        fallback()             -- default Tab behavior
+                        fallback()
                     end
                 end, { "i", "s" }),
 
                 ["<S-Tab>"] = cmp.mapping(function(fallback)
                     if cmp.visible() then
-                        cmp.select_prev_item() -- previous completion item
+                        cmp.select_prev_item()
                     else
-                        fallback()             -- default Shift-Tab behavior
+                        fallback()
                     end
                 end, { "i", "s" }),
             }),
             sources = cmp.config.sources({
-                { name = "nvim_lsp" }, -- LSP source
-                { name = "path" },     -- filesystem paths
-                { name = "buffer" },   -- buffer words
+                { name = "nvim_lsp" },
+                { name = "path" },
+                { name = "buffer" },
             }),
             formatting = {
                 format = function(_, item)
-                    -- No icons
-                    item.menu = "" -- empty menu column
+                    item.menu = ""
                     return item
                 end,
             },
             window = {
-                completion = cmp.config.window.bordered(),    -- bordered completion
-                documentation = cmp.config.window.bordered(), -- bordered docs
+                completion = cmp.config.window.bordered(),
+                documentation = cmp.config.window.bordered(),
             },
         })
     end,

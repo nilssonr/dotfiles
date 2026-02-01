@@ -1,58 +1,30 @@
--- ===============================================================
--- UI
--- ===============================================================
-vim.opt.number = true         -- show absolute line numbers
-vim.opt.relativenumber = true -- show relative line numbers
+vim.opt.number = true
+vim.opt.relativenumber = true
 
-vim.opt.termguicolors = true  -- enable 24-bit color
-vim.opt.signcolumn = "yes"    -- always show sign column
+vim.opt.termguicolors = true
+vim.opt.signcolumn = "yes"
 
-vim.opt.wrap = false          -- disable line wrapping
-vim.opt.scrolloff = 8         -- keep 8 lines visible around cursor
+vim.opt.wrap = false
+vim.opt.scrolloff = 8
 
--- ===============================================================
--- Search
--- ===============================================================
-vim.opt.ignorecase = true -- case-insensitive search by default
-vim.opt.smartcase = true  -- case-sensitive if uppercase in query
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
--- ===============================================================
--- Timing
--- ===============================================================
-vim.opt.updatetime = 250 -- faster CursorHold and diagnostics
-vim.opt.timeoutlen = 400 -- key sequence timeout
+vim.opt.updatetime = 250
+vim.opt.timeoutlen = 400
 
--- ===============================================================
--- Swap
--- ===============================================================
 local swap_dir = vim.fn.expand("~/.nvim-swp")
 if vim.fn.isdirectory(swap_dir) == 0 then
     vim.fn.mkdir(swap_dir, "p")
 end
-vim.opt.directory = { swap_dir .. "//" } -- keep swap files out of project trees
+vim.opt.directory = { swap_dir .. "//" }
 
--- ===============================================================
--- Indentation
--- ===============================================================
--- Do not force indentation width here; EditorConfig will set per-buffer.
--- Keep conservative defaults.
-vim.opt.expandtab = true -- use spaces instead of tabs
-vim.opt.shiftwidth = 4   -- indentation width
-vim.opt.tabstop = 4      -- tab display width
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
 
--- ===============================================================
--- Visuals
--- ===============================================================
-vim.opt.conceallevel = 0 -- disable conceal (no italics/fancy rendering)
+vim.opt.conceallevel = 0
 
--- ===============================================================
--- Clipboard
--- ===============================================================
-vim.opt.clipboard = "unnamedplus" -- use system clipboard
+vim.opt.clipboard = "unnamedplus"
 
--- ===============================================================
--- Completion
--- ===============================================================
-vim.schedule(function()
-    vim.opt.completeopt = { "menu", "menuone", "noselect" } -- completion menu behavior
-end)
+vim.opt.completeopt = { "menu", "menuone", "noinsert" }

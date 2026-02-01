@@ -1,8 +1,5 @@
--- ===============================================================
--- Debug Adapter Protocol (DAP)
--- ===============================================================
 return {
-  "mfussenegger/nvim-dap", -- core DAP client
+  "mfussenegger/nvim-dap",
   keys = {
     { "<F5>", function() require("dap").continue() end, desc = "DAP continue" },
     { "<F10>", function() require("dap").step_over() end, desc = "DAP step over" },
@@ -19,14 +16,15 @@ return {
     { "<leader>dr", function() require("dap").repl.open() end, desc = "DAP REPL" },
   },
   dependencies = {
-    "mxsdev/nvim-dap-vscode-js", -- JS/TS adapter integration
-    "rcarriga/nvim-dap-ui", -- DAP UI
-    "nvim-neotest/nvim-nio", -- async helpers (dap-ui dependency)
+    "mxsdev/nvim-dap-vscode-js",
+    "rcarriga/nvim-dap-ui",
+    "nvim-neotest/nvim-nio",
   },
   config = function()
-    local util = require("core.util") -- shared helpers
-    local dap = require("dap") -- DAP module
-    local dapui = require("dapui") -- DAP UI
+    local util = require("core.util")
+    local dap = require("dap")
+    local dapui = require("dapui")
+
     local function read_env_file(path)
       if vim.fn.filereadable(path) ~= 1 then
         return {}
@@ -62,7 +60,6 @@ return {
       return env
     end
 
-    -- Maintain adapters here; easy to add/remove.
     local adapters = {
       go = {
         type = "server",
@@ -80,10 +77,9 @@ return {
       },
     }
 
-    dap.adapters.go = adapters.go -- Go adapter
-    dap.adapters.coreclr = adapters.coreclr -- C# adapter
+    dap.adapters.go = adapters.go
+    dap.adapters.coreclr = adapters.coreclr
 
-    -- Go configurations
     dap.configurations.go = {
       {
         type = "go",
@@ -114,7 +110,6 @@ return {
       },
     }
 
-    -- C# configurations
     dap.configurations.cs = {
       {
         type = "coreclr",
@@ -126,15 +121,14 @@ return {
       },
     }
 
-    -- JS/TS via vscode-js-debug
-    local js_debug_path = vim.fn.stdpath("data") .. "/dap/vscode-js-debug" -- debugger install path
+    local js_debug_path = vim.fn.stdpath("data") .. "/dap/vscode-js-debug"
     if vim.fn.isdirectory(js_debug_path) ~= 1 then
       util.warn(("Missing vscode-js-debug at %s. See README.md for install steps."):format(js_debug_path))
     end
 
     require("dap-vscode-js").setup({
-      debugger_path = js_debug_path, -- local debugger path
-      adapters = { "pwa-node" }, -- adapters to enable
+      debugger_path = js_debug_path,
+      adapters = { "pwa-node" },
     })
 
     local node_launch = {
@@ -148,10 +142,9 @@ return {
       protocol = "inspector",
     }
 
-    dap.configurations.typescript = { node_launch } -- TS debug config
-    dap.configurations.javascript = { node_launch } -- JS debug config
+    dap.configurations.typescript = { node_launch }
+    dap.configurations.javascript = { node_launch }
 
-    -- DAP UI: auto-open/close with session lifecycle.
     dapui.setup()
     dap.listeners.after.event_initialized["dapui_config"] = function()
       dapui.open()
@@ -163,7 +156,6 @@ return {
       dapui.close()
     end
 
-    -- Optional: warn if debuggers missing
     if not util.executable("dlv") then
       util.warn("Missing delve (dlv). Install: brew install delve")
     end

@@ -3,11 +3,8 @@ return {
     ft = { "markdown" },
     dependencies = {
         "nvim-treesitter/nvim-treesitter",
-        "nvim-tree/nvim-web-devicons", -- optional, but nice
     },
-    opts = {
-        -- defaults are already pretty good; keep minimal
-    },
+    opts = {},
     keys = {
         { "<leader>mr", "<cmd>RenderMarkdown toggle<cr>", desc = "Markdown: Toggle render" },
     },
