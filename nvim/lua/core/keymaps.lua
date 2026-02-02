@@ -10,7 +10,14 @@ map("n", "<leader>ni", "<cmd>Neorg index<cr>", { desc = "Neorg index" })
 map("x", "x", '"_d', { desc = "Delete without yanking" })
 map("x", "X", '"_d', { desc = "Delete without yanking" })
 
-map("n", "<leader>bd", "<cmd>bd<cr>")
+map("n", "<leader>bd", "<cmd>bd<cr>", { desc = "Close buffer" })
+map("n", "<leader>bD", function()
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
+            vim.cmd("confirm bd " .. buf)
+        end
+    end
+end, { desc = "Close all buffers (prompt if unsaved)" })
 
 -- Diagnostics
 map("n", "<leader>e", vim.diagnostic.open_float, { desc = "Diagnostics float" })
