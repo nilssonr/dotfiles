@@ -44,6 +44,10 @@ vim.opt.tabstop = 4      -- tab display width
 -- Visuals
 -- ===============================================================
 vim.opt.conceallevel = 0 -- disable conceal (no italics/fancy rendering)
+vim.opt.foldmethod = "expr" -- use Tree-sitter for folding
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()" -- Tree-sitter fold expression
+vim.opt.foldlevel = 99 -- start unfolded
+vim.opt.foldlevelstart = 99 -- open folds on buffer read
 
 -- ===============================================================
 -- Clipboard
