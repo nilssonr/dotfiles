@@ -1,0 +1,23 @@
+brew "alacritty"
+brew "tmux"
+brew "neovim"
+brew "fzf"
+brew "ripgrep"
+brew "fd"
+brew "git"
+brew "tree-sitter"
+brew "llvm"
+brew "make"
+brew "lazygit"
+brew "gh"
+
+# Optional
+# brew "fnm"
+# brew "libxml2"
+# brew "yabai"
+# brew "skhd"
+# brew "delve"
+# brew "cmake"
+# brew "ninja"
+
+cask "font-jetbrains-mono-nerd-font"

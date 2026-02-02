@@ -1,15 +1,12 @@
--- ===============================================================
--- Utility Helpers
--- ===============================================================
-local M = {} -- module table
+local M = {}
 
 function M.executable(cmd)
-  return vim.fn.executable(cmd) == 1 -- check if command is on PATH
+  return vim.fn.executable(cmd) == 1
 end
 
 function M.warn(msg)
   vim.schedule(function()
-    vim.notify(msg, vim.log.levels.WARN) -- schedule warning notification
+    vim.notify(msg, vim.log.levels.WARN)
   end)
 end
 

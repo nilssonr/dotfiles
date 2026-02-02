@@ -1,28 +1,28 @@
--- ===============================================================
--- Theme (GitHub Dark Dimmed)
--- ===============================================================
 return {
-  "projekt0n/github-nvim-theme", -- GitHub theme
-  lazy = false, -- load immediately
-  priority = 1000, -- load before other plugins
+  "projekt0n/github-nvim-theme",
+  lazy = false,
+  priority = 1000,
   config = function()
+    -- Disable all italic styles
     require("github-theme").setup({
       options = {
         styles = {
-          comments = "NONE", -- no italics
-          keywords = "NONE", -- no italics
-          types = "NONE", -- no italics
-          functions = "NONE", -- no italics
-          strings = "NONE", -- no italics
-          variables = "NONE", -- no italics
+          comments = "NONE",
+          keywords = "NONE",
+          types = "NONE",
+          functions = "NONE",
+          strings = "NONE",
+          variables = "NONE",
         },
       },
     })
-    vim.cmd.colorscheme("github_dark_dimmed") -- apply colorscheme
-    -- Make statusline blend with terminal background.
+    vim.cmd.colorscheme("github_dark_dimmed")
+
+    -- Make statusline blend with terminal background
     vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE" })
     vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE" })
-    -- Improve TODO contrast across syntax + Treesitter.
+
+    -- Improve TODO/FIXME contrast
     vim.api.nvim_set_hl(0, "Todo", { fg = "#FFFFFF", bg = "#0F0F0F", bold = true })
     vim.api.nvim_set_hl(0, "@comment.todo", { fg = "#FFFFFF", bg = "#0F0F0F", bold = true })
   end,

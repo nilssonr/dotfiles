@@ -1,0 +1,9 @@
+**/.claude/settings.local.json
+.DS_Store
+*.swp
+.env
+.env.local
+*.pyc
+__pycache__/
+.idea/
+.vscode/

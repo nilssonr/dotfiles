@@ -1,95 +1,54 @@
-# ===============================================================
 # Oh My Zsh
-# ===============================================================
 export ZDOTDIR="${ZDOTDIR:-$HOME/.config/zsh}"
 export ZSH="$ZDOTDIR/oh-my-zsh"
 
-# Keep the theme simple; we'll override the prompt after OMZ loads.
 ZSH_THEME="robbyrussell"
-
-# Minimal plugins only
 plugins=(git fzf zsh-autosuggestions)
-
-# Load OMZ
 source "$ZSH/oh-my-zsh.sh"
 
-# ===============================================================
-# Prompt refresh (ensure git status updates immediately on cd)
-# ===============================================================
+# Refresh prompt on directory change so git status updates immediately
 setopt PROMPT_SUBST
 
 autoload -Uz add-zsh-hook
 
-# When directory changes, refresh prompt immediately (covers widgets too)
 function _refresh_prompt_on_chpwd() {
-  # Only runs in interactive shells; zle exists only then.
   if (( $+functions[zle] )); then
     zle reset-prompt 2>/dev/null || true
   fi
 }
 add-zsh-hook chpwd _refresh_prompt_on_chpwd
 
-
-# ===============================================================
-# Environment
-# ===============================================================
-
-# pnpm
+# Environment / PATH
 export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
-# local bin
 export PATH="$HOME/.local/bin:$PATH"
 
-# go bin
-if command -v go >/dev/null 2>&1; then
-  export PATH="$(go env GOPATH)/bin:$PATH"
-fi
+# Avoid forking `go env` on every shell start
+export PATH="${GOPATH:-$HOME/go}/bin:$PATH"
 
-# Corepack: suppress download prompt
+# Suppress Corepack interactive download prompt
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
-# fnm (Fast Node Manager)
 if command -v fnm >/dev/null 2>&1; then
   eval "$(fnm env --use-on-cd --shell zsh)"
 fi
 
-# ===============================================================
-# Prompt — GitHub Dark Dimmed (text-only)
-# Must be AFTER OMZ is sourced, otherwise theme overrides it.
-# ===============================================================
-
-# Git segment styling (used by git_prompt_info from OMZ)
+# Prompt — must be AFTER OMZ is sourced, otherwise the theme overrides it
 ZSH_THEME_GIT_PROMPT_PREFIX='%F{red}('
 ZSH_THEME_GIT_PROMPT_SUFFIX=')%f '
 ZSH_THEME_GIT_PROMPT_DIRTY='%F{yellow}*%f'
 ZSH_THEME_GIT_PROMPT_CLEAN=''
 
-# Prompt:
-# - blue current path (%~)
-# - git branch if in repo
-# - right-pointing caret
 PROMPT='%F{blue}%~%f $(git_prompt_info)› '
 
-# Optional: show a red prompt path when last command failed (uncomment if desired)
-# PROMPT='%(?.%F{blue}%~.%F{red}%~)%f $(git_prompt_info)› '
-
-# ===============================================================
-# ls colors (macOS, GitHub Dark Dimmed–friendly)
-# ===============================================================
-
-# Directories: blue
-# Symlinks: cyan
-# Executables: green
-# Everything else: default
+# ls colors: directories blue, symlinks cyan, executables green
 export LSCOLORS="exfxcxdxbxegedabagacad"
 
-# ===============================================================
-# Aliases (minimal)
-# ===============================================================
+# Aliases
 alias ll='ls -lah'
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -99,13 +58,7 @@ alias kx='kubectx'
 alias kns='kubens'
 alias vim='nvim'
 
-# ===============================================================
-# Project picker (fzf)
-# - Workspace roots: ~/Code/*
-# - Repos: one level down (~/Code/<root>/<repo>)
-# ===============================================================
-
-# Internal: print a selected "root/repo" to stdout (or nothing if canceled).
+# Project picker — lists repos one level under ~/Code/*/
 function _cproj_select() {
   local -a candidates
   candidates=()
@@ -120,13 +73,11 @@ function _cproj_select() {
 
   (( ${#candidates[@]} == 0 )) && return 1
 
-  # Show as "workspace/repo"
   printf '%s\n' "${candidates[@]}" \
     | sed "s|^$HOME/Code/||" \
     | fzf --prompt='project> ' --no-sort --tiebreak=index
 }
 
-# Command form: type `cproj` then Enter
 function cproj() {
   local selected
   selected="$(_cproj_select)" || return 0
@@ -135,14 +86,13 @@ function cproj() {
 
 alias p='cproj'
 
-# Widget form: Ctrl-P (updates prompt immediately)
+# Widget form (Ctrl-P) — updates prompt immediately after cd
 function _cproj_widget() {
   local selected
   selected="$(_cproj_select)" || { zle reset-prompt; return 0; }
 
   cd "$HOME/Code/$selected" || { zle reset-prompt; return 1; }
 
-  # Clear current editing line and redraw prompt in the new directory
   BUFFER=""
   CURSOR=0
   zle reset-prompt
@@ -151,56 +101,12 @@ function _cproj_widget() {
 zle -N _cproj_widget
 bindkey '^P' _cproj_widget
 
-# ===============================================================
-# Completion menu colors (Tab list) — make directories blue
-# ===============================================================
+# Completion
 zmodload -i zsh/complist
-
-# zsh uses GNU dircolors-style codes here:
-# di=34 (blue), ln=36 (cyan), ex=32 (green)
 zstyle ':completion:*' list-colors 'di=34:ln=36:ex=32'
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
-
-  ca() {
-    # Ensure we are in a directory
-    if [ ! -d "$PWD" ]; then
-      echo "Not a directory."
-      return 1
-    fi
-
-    # Optional: ensure it's a git repo
-    if [ ! -d "$PWD/.git" ]; then
-      echo "Not a git repository: $PWD"
-      return 1
-    fi
-
-    # Use repo name to create a stable volume name
-    local repo_name
-    repo_name="$(basename "$PWD")"
-    local home_vol="codex-${repo_name}-home"
-
-    # Pull token from host keychain
-    local gh_token
-    gh_token="$(gh auth token -h github.com 2>/dev/null || true)"
-    if [ -z "$gh_token" ]; then
-      echo "No GitHub token on host. Run: gh auth login -h github.com"
-      return 1
-    fi
-
-    docker run -it --rm \
-      -w /workspace \
-      -e CODEX_HOME=/home/codex/.codex \
-      -e GH_TOKEN="$gh_token" \
-      -v "$PWD:/workspace" \
-      -v "${home_vol}:/home/codex" \
-      -v "$HOME/.codex:/codex-host:ro" \
-      -v "$HOME/.config/gh:/home/codex/.config/gh:ro" \
-      -v "$HOME/.ssh/id_ed25519:/sshkeys/id_ed25519:ro" \
-      -v "$HOME/.ssh/id_ed25519.pub:/sshkeys/id_ed25519.pub:ro" \
-      codex-dev
-  }
+[ -d /opt/homebrew/opt/llvm ] && export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
 fpath=(./completions $fpath)
 autoload -Uz compinit
