@@ -1,54 +1,30 @@
-# ===============================================================
-# General
-# ===============================================================
 [general]
-import = ["~/.config/alacritty/github-dark-dimmed.toml"] # shared color palette
-live_config_reload = true # reload config on save
+import = ["~/.config/alacritty/github-dark-dimmed.toml"]
+live_config_reload = true
 
-# ===============================================================
-# Shell
-# ===============================================================
 [terminal.shell]
-program = "/bin/zsh" # login shell path
-args = ["-l"] # login shell flag
+program = "/bin/zsh"
+args = ["-l"]
 
-# ===============================================================
-# Environment
-# ===============================================================
 [env]
-TERM = "xterm-256color" # terminal type for apps
+TERM = "xterm-256color"
 
-# ===============================================================
-# Window
-# ===============================================================
 [window]
-decorations = "Buttonless" # macOS titlebar style
-dynamic_padding = false # keep padding fixed on resize
-opacity = 1 # window transparency
-blur = true # enable background blur (macOS)
+decorations = "Buttonless"
+dynamic_padding = false
+opacity = 1
+blur = true
 
-# ===============================================================
-# Window Padding
-# ===============================================================
 [window.padding]
-x = 4 # horizontal padding in pixels
-y = 0 # vertical padding in pixels
+x = 4
+y = 0
 
-# ===============================================================
-# Font
-# ===============================================================
 [font]
-size = 13 # font size in points
+size = 13
 
-# ===============================================================
-# Font Family
-# ===============================================================
 [font.normal]
-family = "JetBrainsMono Nerd Font" # primary font family
-style = "Regular" # font style
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
 
-# ===============================================================
-# Scrolling
-# ===============================================================
 [scrolling]
-history = 100000 # number of lines to keep in scrollback
+history = 100000
