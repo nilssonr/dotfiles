@@ -11,7 +11,7 @@ return {
             changedelete = { text = "~" },
             untracked = { text = "|" },
         },
-        current_line_blame = false,
+        current_line_blame = true,
         current_line_blame_opts = {
             virt_text = true,
             virt_text_pos = "eol",
@@ -29,11 +29,7 @@ return {
         local gs = require("gitsigns")
         local map = vim.keymap.set
 
-        map("n", "<leader>gb", gs.toggle_current_line_blame, { desc = "Git blame (toggle line)" })
         map("n", "]h", gs.next_hunk, { desc = "Next hunk" })
         map("n", "[h", gs.prev_hunk, { desc = "Prev hunk" })
-        map("n", "<leader>gs", gs.stage_hunk, { desc = "Stage hunk" })
-        map("n", "<leader>gr", gs.reset_hunk, { desc = "Reset hunk" })
-        map("n", "<leader>gp", gs.preview_hunk, { desc = "Preview hunk" })
     end,
 }
