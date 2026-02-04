@@ -16,8 +16,6 @@ return {
                 "go",
                 "rust",
                 "c_sharp",
-                "norg",
-                "norg_meta",
             },
             highlight = { enable = true },
             indent = { enable = true },
