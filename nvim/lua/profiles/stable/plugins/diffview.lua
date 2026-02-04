@@ -6,5 +6,7 @@ return {
         { "<leader>dF", "<cmd>DiffviewClose<cr>", desc = "Diffview close" },
         { "<leader>dh", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview file history" },
     },
-    opts = {},
+    opts = {
+        use_icons = false,
+    },
 }
