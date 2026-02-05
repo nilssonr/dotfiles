@@ -19,6 +19,9 @@ function _refresh_prompt_on_chpwd() {
 add-zsh-hook chpwd _refresh_prompt_on_chpwd
 
 # Environment / PATH
+export EDITOR=nvim
+export VISUAL=nvim
+
 export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
