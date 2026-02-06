@@ -36,10 +36,10 @@ function M.setup()
     local util = require("core.util")
     local capabilities = vim.lsp.protocol.make_client_capabilities()
 
-    -- Merge cmp_nvim_lsp capabilities when available
-    local ok, cmp = pcall(require, "cmp_nvim_lsp")
-    if ok and cmp and type(cmp.default_capabilities) == "function" then
-        capabilities = cmp.default_capabilities(capabilities)
+    -- Merge blink.cmp capabilities when available
+    local ok, blink = pcall(require, "blink.cmp")
+    if ok then
+        capabilities = blink.get_lsp_capabilities(capabilities)
     end
 
     -- No snippets by design
