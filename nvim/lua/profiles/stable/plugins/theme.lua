@@ -18,9 +18,19 @@ return {
     })
     vim.cmd.colorscheme("github_dark_dimmed")
 
-    -- Make statusline blend with terminal background
-    vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE" })
-    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE" })
+    -- Statusline — subtle bar that sits above tmux
+    vim.api.nvim_set_hl(0, "StatusLine", { bg = "#22272e", fg = "#768390" })
+    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "#22272e", fg = "#545d68" })
+    vim.api.nvim_set_hl(0, "StatusLineFile", { bg = "#22272e", fg = "#adbac7" })
+    vim.api.nvim_set_hl(0, "StatusLineGit", { bg = "#22272e", fg = "#57ab5a" })
+    vim.api.nvim_set_hl(0, "StatusLinePos", { bg = "#22272e", fg = "#768390" })
+    vim.api.nvim_set_hl(0, "StatusLineModified", { bg = "#22272e", fg = "#f69d50" })
+    vim.api.nvim_set_hl(0, "StatusLineSep", { bg = "#22272e", fg = "#444c56" })
+
+    -- Floating windows (LSP hover, signature help, etc.) — match blink.cmp
+    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#2d333b", fg = "#adbac7" })
+    vim.api.nvim_set_hl(0, "FloatBorder", { bg = "#2d333b", fg = "#444c56" })
+    vim.api.nvim_set_hl(0, "FloatTitle", { bg = "#2d333b", fg = "#539bf5", bold = true })
 
     -- Improve TODO/FIXME contrast
     vim.api.nvim_set_hl(0, "Todo", { fg = "#FFFFFF", bg = "#0F0F0F", bold = true })

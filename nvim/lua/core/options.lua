@@ -36,3 +36,38 @@ vim.opt.clipboard = "unnamedplus"
 
 -- noinsert ensures the first completion item is pre-selected
 vim.opt.completeopt = { "menu", "menuone", "noinsert" }
+
+-- Statusline: repo-level dirty check (cached)
+_G.statusline_git_dirty = false
+
+local function update_git_dirty()
+    vim.fn.jobstart({ "git", "status", "--porcelain" }, {
+        stdout_buffered = true,
+        on_stdout = function(_, data)
+            _G.statusline_git_dirty = data and #data > 1 or (data[1] and data[1] ~= "")
+            vim.cmd("redrawstatus")
+        end,
+    })
+end
+
+-- Update on save, focus, and directory change
+vim.api.nvim_create_autocmd({ "BufWritePost", "FocusGained", "DirChanged" }, {
+    callback = update_git_dirty,
+})
+vim.defer_fn(update_git_dirty, 100)  -- initial check
+
+function _G.statusline_git()
+    local head = vim.b.gitsigns_head
+    if not head or head == "" then return "" end
+    return head .. (_G.statusline_git_dirty and "*" or "")
+end
+
+vim.opt.statusline = table.concat({
+    "%#StatusLineFile# %f",                              -- filename
+    "%#StatusLineModified#%m",                           -- modified flag
+    "%#StatusLine#%r%h%w",                               -- readonly/help/preview
+    "%=",                                                -- right align
+    "%#StatusLineGit#%{v:lua.statusline_git()}",         -- git branch + dirty indicator
+    "%#StatusLineSep# │ ",                               -- separator
+    "%#StatusLinePos#%l:%c ",                            -- line:col
+})

@@ -36,6 +36,15 @@ function M.setup()
     local util = require("core.util")
     local capabilities = vim.lsp.protocol.make_client_capabilities()
 
+    -- Add borders to all LSP floating windows (hover, signature help, etc.)
+    local orig_open_floating_preview = vim.lsp.util.open_floating_preview
+    ---@diagnostic disable-next-line: duplicate-set-field
+    vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
+        opts = opts or {}
+        opts.border = opts.border or "rounded"
+        return orig_open_floating_preview(contents, syntax, opts, ...)
+    end
+
     -- Merge blink.cmp capabilities when available
     local ok, blink = pcall(require, "blink.cmp")
     if ok then
