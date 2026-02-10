@@ -24,6 +24,16 @@ return {
         end
         capabilities.textDocument.completion.completionItem.snippetSupport = false
 
+        -- Reset init gate on server exit so :Roslyn restart re-suppresses
+        vim.api.nvim_create_autocmd("LspDetach", {
+            callback = function(args)
+                local client = vim.lsp.get_client_by_id(args.data.client_id)
+                if client and client.name == "roslyn" then
+                    _G.roslyn_initialized = false
+                end
+            end,
+        })
+
         vim.lsp.config("roslyn", {
             cmd = {
                 "dotnet",
@@ -36,6 +46,19 @@ return {
             },
             cmd_cwd = dir,
             capabilities = capabilities,
+            handlers = {
+                -- Roslyn pushes diagnostics before workspace/projectInitializationComplete,
+                -- producing phantom CS0518/CS0246 errors from a half-loaded workspace.
+                -- Gate push diagnostics on _G.roslyn_initialized (set by the plugin's
+                -- projectInitializationComplete handler). Pull diagnostics requested
+                -- after init are unaffected — they use textDocument/diagnostic.
+                ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+                    if not _G.roslyn_initialized then
+                        return
+                    end
+                    return vim.lsp.handlers["textDocument/publishDiagnostics"](err, result, ctx, config)
+                end,
+            },
             settings = {
                 ["csharp|background_analysis"] = {
                     dotnet_analyzer_diagnostics_scope = "openFiles",
