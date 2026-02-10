@@ -50,6 +50,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         bmap("i", "<C-k>", vim.lsp.buf.signature_help, "signature help")
         bmap("n", "<leader>lr", vim.lsp.buf.rename, "Rename")
         bmap("n", "<leader>la", vim.lsp.buf.code_action, "Code action")
+        bmap("n", "<leader>lR", "<cmd>Roslyn restart<cr>", "Restart Roslyn")
     end,
 })
 
