@@ -43,10 +43,3 @@ vim.api.nvim_create_autocmd("FileType", {
         end, { buffer = true, silent = true })
     end,
 })
-
--- Ensure first completion item is selected (reinforces options.lua setting)
-vim.api.nvim_create_autocmd("InsertEnter", {
-    callback = function()
-        vim.opt.completeopt = { "menu", "menuone", "noinsert" }
-    end,
-})

@@ -7,6 +7,5 @@ return {
       separator = "",
       group = "",
     },
-    win = { border = "rounded" },
   },
 }

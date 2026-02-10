@@ -10,7 +10,6 @@ function M.setup()
         { import = "profiles.stable.plugins" },
     })
 
-    require("core.roslyn").setup()
     require("core.lsp").setup()
 
     vim.api.nvim_create_autocmd("VimEnter", {
