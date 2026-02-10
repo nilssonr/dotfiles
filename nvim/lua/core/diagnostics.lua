@@ -6,8 +6,8 @@ function M.setup()
         underline = true,
         severity_sort = true,
         update_in_insert = false,
-        float = { border = "rounded", source = "if_many" },
-        virtual_lines = { underline = true }
+        float = { source = "if_many" },
+        virtual_lines = { current_line = true }
     })
 end
 

@@ -24,7 +24,6 @@ return {
                 },
             },
             menu = {
-                border = "rounded",
                 winhighlight = "Normal:BlinkCmpMenu,FloatBorder:BlinkCmpMenuBorder,CursorLine:BlinkCmpMenuSelection,Search:None",
                 draw = {
                     columns = {
@@ -35,7 +34,6 @@ return {
             },
             documentation = {
                 window = {
-                    border = "rounded",
                     winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder",
                 },
             },

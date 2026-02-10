@@ -25,7 +25,6 @@ function M.setup(spec)
     checker = { enabled = false },
     change_detection = { notify = false },
     ui = {
-      border = "rounded",
       icons = {
         cmd = "",
         config = "",
