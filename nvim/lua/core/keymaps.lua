@@ -21,8 +21,8 @@ end, { desc = "Close all buffers (prompt if unsaved)" })
 
 -- Diagnostics
 map("n", "<leader>e", vim.diagnostic.open_float, { desc = "Diagnostics float" })
-map("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
-map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, { desc = "Prev diagnostic" })
+map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, { desc = "Next diagnostic" })
 
 -- Format — routes through core.format which handles XML specially, falls back to LSP
 map("n", "<leader>f", function()
