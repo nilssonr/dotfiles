@@ -33,24 +33,27 @@ end, { desc = "Format buffer" })
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(args)
         local bufnr = args.buf
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-        if vim.b[bufnr].lsp_keymaps then
-            return
+        if not vim.b[bufnr].lsp_keymaps then
+            vim.b[bufnr].lsp_keymaps = true
+
+            local bmap = function(mode, lhs, rhs, desc)
+                vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
+            end
+
+            bmap("n", "gd", vim.lsp.buf.definition, "go to definition")
+            bmap("n", "gr", vim.lsp.buf.references, "references")
+            bmap("n", "gI", vim.lsp.buf.implementation, "implementations")
+            bmap("n", "K", vim.lsp.buf.hover, "Hover")
+            bmap("i", "<C-k>", vim.lsp.buf.signature_help, "signature help")
+            bmap("n", "<leader>lr", vim.lsp.buf.rename, "Rename")
+            bmap("n", "<leader>la", vim.lsp.buf.code_action, "Code action")
         end
-        vim.b[bufnr].lsp_keymaps = true
 
-        local bmap = function(mode, lhs, rhs, desc)
-            vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
+        if client and client.name == "roslyn" then
+            vim.keymap.set("n", "<leader>lR", "<cmd>Roslyn restart<cr>", { buffer = bufnr, desc = "Restart Roslyn" })
         end
-
-        bmap("n", "gd", vim.lsp.buf.definition, "go to definition")
-        bmap("n", "gr", vim.lsp.buf.references, "references")
-        bmap("n", "gI", vim.lsp.buf.implementation, "implementations")
-        bmap("n", "K", vim.lsp.buf.hover, "Hover")
-        bmap("i", "<C-k>", vim.lsp.buf.signature_help, "signature help")
-        bmap("n", "<leader>lr", vim.lsp.buf.rename, "Rename")
-        bmap("n", "<leader>la", vim.lsp.buf.code_action, "Code action")
-        bmap("n", "<leader>lR", "<cmd>Roslyn restart<cr>", "Restart Roslyn")
     end,
 })
 
