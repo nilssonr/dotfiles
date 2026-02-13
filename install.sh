@@ -23,7 +23,7 @@ fi
 
 # 3. Symlink config directories
 mkdir -p "$CONFIG_DIR"
-for dir in alacritty tmux nvim zsh yabai skhd gh git; do
+for dir in alacritty tmux nvim zsh yabai skhd git; do
     src="$DOTFILES/$dir"
     dest="$CONFIG_DIR/$dir"
     if [ -d "$src" ]; then
