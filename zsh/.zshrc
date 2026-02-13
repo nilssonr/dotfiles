@@ -111,14 +111,6 @@ zstyle ':completion:*' list-colors 'di=34:ln=36:ex=32'
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
 [ -d /opt/homebrew/opt/llvm ] && export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
-fpath=(./completions $fpath)
+fpath=("$ZDOTDIR/completions" $fpath)
 autoload -Uz compinit
 compinit
-
-# pnpm
-export PNPM_HOME="/Users/ingemar/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end

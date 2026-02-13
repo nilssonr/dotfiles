@@ -1,7 +1,10 @@
 -- Only non-default values — see nvim-tree docs for full option list
 return {
     "nvim-tree/nvim-tree.lua",
-    lazy = false,
+    keys = {
+        { "<leader>fb", function() require("nvim-tree.api").tree.toggle() end, desc = "File Browser" },
+    },
+    cmd = { "NvimTreeToggle", "NvimTreeOpen", "NvimTreeFocus" },
     config = function()
         require("nvim-tree").setup({
             view = {
@@ -53,9 +56,5 @@ return {
                 },
             },
         })
-
-        vim.keymap.set("n", "<leader>fb", function()
-            require("nvim-tree.api").tree.toggle()
-        end, { desc = "File Browser" })
     end,
 }
