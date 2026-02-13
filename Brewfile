@@ -1,4 +1,4 @@
-brew "alacritty"
+cask "alacritty"
 brew "tmux"
 brew "neovim"
 brew "fzf"
