@@ -84,7 +84,7 @@ function poirot() {
     shift
   fi
   OTEL_RESOURCE_ATTRIBUTES="${otel_attrs}" \
-    claude --agent hercule-poirot --plugin-dir ~/Code/nilssonr/claude-ops --dangerously-skip-permissions "$@"
+    claude --agent claude-ops:hercule-poirot --plugin-dir ~/Code/nilssonr/claude-ops --dangerously-skip-permissions "$@"
 }
 
 # Project picker — lists repos one level under ~/Code/*/
