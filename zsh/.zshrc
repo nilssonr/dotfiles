@@ -63,29 +63,28 @@ alias vim='nvim'
 
 # Claude launchers — accept an optional session name as the first positional arg.
 # If the first arg doesn't start with '-', it's treated as a session name.
-# Both always set agent=<name> so Grafana can filter by which tool was used.
-# Usage: odin [session-name] [claude-flags...]
-#        mimir [session-name] [claude-flags...]
-function odin() {
-  local otel_attrs="agent=odin"
+# Usage: agent [session-name] [claude-flags...]
+#        poirot [session-name] [claude-flags...]
+function agent() {
+  local otel_attrs="agent=claude"
   if [[ -n "${1:-}" && "${1}" != -* ]]; then
     local session_name="${1// /_}"
     otel_attrs="${otel_attrs},session_name=${session_name}"
     shift
   fi
   OTEL_RESOURCE_ATTRIBUTES="${otel_attrs}" \
-    claude --agent mimir:odin --dangerously-skip-permissions "$@"
+    claude --plugin-dir ~/Code/nilssonr/claude-ops --dangerously-skip-permissions "$@"
 }
 
-function mimir() {
-  local otel_attrs="agent=mimir"
+function poirot() {
+  local otel_attrs="agent=poirot"
   if [[ -n "${1:-}" && "${1}" != -* ]]; then
     local session_name="${1// /_}"
     otel_attrs="${otel_attrs},session_name=${session_name}"
     shift
   fi
   OTEL_RESOURCE_ATTRIBUTES="${otel_attrs}" \
-    claude --agent mimir:mimir --plugin-dir ~/Code/nilssonr/mimir --dangerously-skip-permissions "$@"
+    claude --agent hercule-poirot --plugin-dir ~/Code/nilssonr/claude-ops --dangerously-skip-permissions "$@"
 }
 
 # Project picker — lists repos one level under ~/Code/*/
