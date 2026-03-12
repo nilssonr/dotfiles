@@ -7,15 +7,14 @@ return {
         broad_search = false,
         lock_target = false,
         silent = false,
-        -- Disable filesystem-level file watching. Docker bind mounts from
-        -- composer's dotnet watch cause obj/bin churn that triggers Roslyn
-        -- workspace reloads and phantom diagnostics. Buffer-level changes
-        -- (textDocument/didChange) still work normally.
-        filewatching = "off",
+        -- Let Roslyn handle its own file watching via the filesystem rather
+        -- than Neovim's LSP watcher. Avoids obj/bin churn from Docker bind
+        -- mounts triggering workspace reloads, while still letting the server
+        -- detect real changes on disk (builds, restores, git checkouts).
+        filewatching = "roslyn",
     },
     init = function()
         local dll = vim.fn.expand("~/.local/share/lsp/roslyn/content/LanguageServer/osx-arm64/Microsoft.CodeAnalysis.LanguageServer.dll")
-        local dir = vim.fs.dirname(dll)
 
         if vim.fn.filereadable(dll) ~= 1 then
             vim.notify("Roslyn LS not found: " .. dll, vim.log.levels.WARN)
@@ -29,13 +28,13 @@ return {
         end
         capabilities.textDocument.completion.completionItem.snippetSupport = false
 
-        -- Clear stale diagnostics on server exit so :Roslyn restart starts clean
+        -- Clear stale pull diagnostics on server exit so :Roslyn restart starts clean
         vim.api.nvim_create_autocmd("LspDetach", {
             callback = function(args)
                 local client = vim.lsp.get_client_by_id(args.data.client_id)
                 if client and client.name == "roslyn" then
                     vim.diagnostic.reset(
-                        vim.lsp.diagnostic.get_namespace(args.data.client_id, false),
+                        vim.lsp.diagnostic.get_namespace(args.data.client_id, true),
                         nil
                     )
                 end
@@ -52,21 +51,7 @@ return {
                 vim.fn.stdpath("state"),
                 "--stdio",
             },
-            cmd_cwd = dir,
             capabilities = capabilities,
-            handlers = {
-                -- Roslyn's push diagnostics (publishDiagnostics) are unreliable:
-                -- they fire during workspace loading, after saves, and after external
-                -- edits with stale/phantom errors (CS0246, CS0518, etc.) from
-                -- partially-resolved project state.
-                --
-                -- Suppress push entirely. Neovim pulls diagnostics on demand via
-                -- textDocument/diagnostic (supported by Roslyn), which returns
-                -- stable results. roslyn.nvim also uses pull in diagnostics.refresh().
-                ["textDocument/publishDiagnostics"] = function()
-                    return
-                end,
-            },
             settings = {
                 ["csharp|background_analysis"] = {
                     dotnet_analyzer_diagnostics_scope = "openFiles",
