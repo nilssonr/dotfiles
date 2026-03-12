@@ -7,11 +7,12 @@ return {
         broad_search = false,
         lock_target = false,
         silent = false,
-        -- Let Roslyn handle its own file watching via the filesystem rather
-        -- than Neovim's LSP watcher. Avoids obj/bin churn from Docker bind
-        -- mounts triggering workspace reloads, while still letting the server
-        -- detect real changes on disk (builds, restores, git checkouts).
-        filewatching = "roslyn",
+        -- Disable filesystem-level file watching. Docker container restarts
+        -- and bind-mount events trigger Roslyn workspace reloads with
+        -- incomplete state, causing transient error floods and stale push
+        -- diagnostics. Buffer-level changes (textDocument/didChange) and
+        -- pull diagnostics (textDocument/diagnostic) still work normally.
+        filewatching = "off",
     },
     init = function()
         local dll = vim.fn.expand("~/.local/share/lsp/roslyn/content/LanguageServer/osx-arm64/Microsoft.CodeAnalysis.LanguageServer.dll")
