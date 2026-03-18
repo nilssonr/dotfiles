@@ -1,6 +1,9 @@
 local root = vim.fn.getcwd()
 vim.opt.rtp:prepend(root .. "/nvim")
-require("core.lsp").setup()
+
+-- In 0.12, lsp/ configs are auto-discovered when on the rtp.
+-- Force-load the angularls config file for testing.
+dofile(root .. "/nvim/lsp/angularls.lua")
 
 local cfg = vim.lsp.config.angularls
 assert(cfg, "angularls config missing")
