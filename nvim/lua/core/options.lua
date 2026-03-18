@@ -1,3 +1,9 @@
+-- ===============================================================
+-- Options — Editor settings and statusline
+-- ===============================================================
+-- UI preferences, search, timing, indentation, folding, and a custom
+-- statusline with git branch + dirty indicator via gitsigns.
+
 -- UI
 vim.opt.number = true
 vim.opt.relativenumber = true

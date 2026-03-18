@@ -1,3 +1,10 @@
+-- ===============================================================
+-- Format — Buffer formatting with XML special handling
+-- ===============================================================
+-- XML files use xmllint (LSP formatters don't handle XML well).
+-- Everything else falls back to LSP format. Preserves original XML
+-- declaration presence/absence.
+
 local M = {}
 
 local function has(cmd)

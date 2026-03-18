@@ -1,3 +1,8 @@
+-- ===============================================================
+-- Autocommands — Global editor autocommands
+-- ===============================================================
+-- Yank highlight, format on save, and quickfix close-on-select.
+
 -- Briefly highlight yanked text
 vim.api.nvim_create_autocmd("TextYankPost", {
     callback = function()
@@ -12,15 +17,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
             return
         end
         require("core.format").format_current_buffer()
-    end,
-})
-
--- Neorg needs conceallevel for rendering
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "norg",
-    callback = function()
-        vim.opt_local.conceallevel = 2
-        vim.opt_local.concealcursor = "nc"
     end,
 })
 

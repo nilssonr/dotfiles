@@ -1,3 +1,9 @@
+-- ===============================================================
+-- Diagnostics — Diagnostic display configuration
+-- ===============================================================
+-- Virtual text disabled in favor of virtual_lines on the current line.
+-- Underline and severity sort enabled for clean gutter presentation.
+
 local M = {}
 
 function M.setup()

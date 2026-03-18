@@ -1,10 +1,17 @@
+-- ===============================================================
+-- Keymaps — Global and LSP buffer-local key bindings
+-- ===============================================================
+-- 0.12 provides default LSP keymaps: grr (references), gra (code action),
+-- grn (rename), gri (implementation), K (hover), <C-S> (signature help).
+-- Default diagnostic keymaps: [d/]d (navigate), <C-W>d (float).
+-- Only gd (definition) needs manual mapping.
+
 local map = vim.keymap.set
 
 -- Basic
 map("n", "<leader>w", "<cmd>w<cr>", { desc = "Write" })
 map("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit" })
 map("n", "<leader>Q", "<cmd>qa!<cr>", { desc = "Quit all (force)" })
-map("n", "<leader>ni", "<cmd>Neorg index<cr>", { desc = "Neorg index" })
 
 -- Delete to black hole so yanked text isn't overwritten
 map("x", "x", '"_d', { desc = "Delete without yanking" })
@@ -19,11 +26,6 @@ map("n", "<leader>bD", function()
     end
 end, { desc = "Close all buffers (prompt if unsaved)" })
 
--- Diagnostics
-map("n", "<leader>e", vim.diagnostic.open_float, { desc = "Diagnostics float" })
-map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, { desc = "Prev diagnostic" })
-map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, { desc = "Next diagnostic" })
-
 -- Format — routes through core.format which handles XML specially, falls back to LSP
 map("n", "<leader>f", function()
     require("core.format").format_current_buffer()
@@ -35,21 +37,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
         local bufnr = args.buf
         local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-        if not vim.b[bufnr].lsp_keymaps then
-            vim.b[bufnr].lsp_keymaps = true
-
-            local bmap = function(mode, lhs, rhs, desc)
-                vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
-            end
-
-            bmap("n", "gd", vim.lsp.buf.definition, "go to definition")
-            bmap("n", "gr", vim.lsp.buf.references, "references")
-            bmap("n", "gI", vim.lsp.buf.implementation, "implementations")
-            bmap("n", "K", vim.lsp.buf.hover, "Hover")
-            bmap("i", "<C-k>", vim.lsp.buf.signature_help, "signature help")
-            bmap("n", "<leader>lr", vim.lsp.buf.rename, "Rename")
-            bmap("n", "<leader>la", vim.lsp.buf.code_action, "Code action")
-        end
+        -- gd is the only LSP keymap not provided by 0.12 defaults
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = bufnr, desc = "Go to definition" })
 
         if client and client.name == "roslyn" then
             vim.keymap.set("n", "<leader>lR", "<cmd>Roslyn restart<cr>", { buffer = bufnr, desc = "Restart Roslyn" })
