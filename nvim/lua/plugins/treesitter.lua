@@ -15,6 +15,7 @@ require("nvim-treesitter.configs").setup({
         "go",
         "rust",
         "c_sharp",
+        "erlang",
     },
     highlight = { enable = true },
     indent = { enable = true },

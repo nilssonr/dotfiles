@@ -137,6 +137,10 @@ zstyle ':completion:*' list-colors 'di=34:ln=36:ex=32'
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
 [ -d /opt/homebrew/opt/llvm ] && export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
+# Pre-extracted eqwalizer JAR — avoids race condition when ELP spawns
+# parallel workers that each try to extract the JAR to a temp path.
+export ELP_EQWALIZER_PATH="$HOME/.local/share/eqwalizer.jar"
+
 fpath=("$ZDOTDIR/completions" $fpath)
 autoload -Uz compinit
 compinit

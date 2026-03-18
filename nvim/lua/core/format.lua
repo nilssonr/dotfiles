@@ -1,9 +1,9 @@
 -- ===============================================================
--- Format — Buffer formatting with XML special handling
+-- Format — Buffer formatting with external tool fallbacks
 -- ===============================================================
 -- XML files use xmllint (LSP formatters don't handle XML well).
--- Everything else falls back to LSP format. Preserves original XML
--- declaration presence/absence.
+-- Erlang files use erlfmt (ELP doesn't support formatting).
+-- Everything else falls back to LSP format.
 
 local M = {}
 
@@ -44,6 +44,29 @@ function M.format_current_buffer()
             table.remove(new_lines, #new_lines)
         end
 
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, new_lines)
+        return
+    end
+
+    -- Erlang: use erlfmt (ELP doesn't support formatting)
+    if ft == "erlang" then
+        if not has("erlfmt") then
+            vim.notify("erlfmt not found on PATH", vim.log.levels.WARN)
+            return
+        end
+        local buf = vim.api.nvim_get_current_buf()
+        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+        local input = table.concat(lines, "\n")
+        local result = vim.system({ "erlfmt", "-" }, { stdin = input, text = true }):wait()
+        if result.code ~= 0 then
+            local msg = (result.stderr and result.stderr ~= "") and result.stderr or "erlfmt failed"
+            vim.notify(msg, vim.log.levels.ERROR)
+            return
+        end
+        local new_lines = vim.split(result.stdout or "", "\n", { plain = true })
+        if #new_lines > 0 and new_lines[#new_lines] == "" then
+            table.remove(new_lines, #new_lines)
+        end
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, new_lines)
         return
     end

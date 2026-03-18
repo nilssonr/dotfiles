@@ -18,12 +18,11 @@ require("core.pack")
 
 -- LSP: merge blink.cmp capabilities, disable snippets, then enable servers
 local capabilities = require("blink.cmp").get_lsp_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = false
 vim.lsp.config("*", { capabilities = capabilities })
 
 -- Enable servers (skip those whose binary isn't on PATH)
 local util = require("core.util")
-local servers = { "gopls", "rust_analyzer", "ts_ls", "angularls", "yamlls", "taplo", "jsonls", "bashls", "lua_ls" }
+local servers = { "gopls", "rust_analyzer", "ts_ls", "angularls", "yamlls", "taplo", "jsonls", "bashls", "lua_ls", "elp" }
 local enabled = {}
 for _, name in ipairs(servers) do
     local cfg = vim.lsp.config[name]
