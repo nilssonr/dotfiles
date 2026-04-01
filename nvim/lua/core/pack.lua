@@ -36,7 +36,7 @@ vim.pack.add({
     "https://github.com/nvim-telescope/telescope-fzf-native.nvim",
     "https://github.com/lewis6991/gitsigns.nvim",
     "https://github.com/christoomey/vim-tmux-navigator",
-    { src = "https://github.com/saghen/blink.cmp", version = "v1.*" },
+    { src = "https://github.com/saghen/blink.cmp", version = "v1" },
 })
 
 require("plugins.theme")

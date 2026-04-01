@@ -145,6 +145,8 @@ fpath=("$ZDOTDIR/completions" $fpath)
 autoload -Uz compinit
 compinit
 
+source <(composer completion zsh)
+
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
