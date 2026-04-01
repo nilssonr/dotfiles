@@ -1,10 +1,9 @@
 -- ===============================================================
 -- Keymaps — Global and LSP buffer-local key bindings
 -- ===============================================================
--- 0.12 provides default LSP keymaps: grr (references), gra (code action),
--- grn (rename), gri (implementation), K (hover), <C-S> (signature help).
--- Default diagnostic keymaps: [d/]d (navigate), <C-W>d (float).
--- Only gd (definition) needs manual mapping.
+-- 0.12 provides default LSP keymaps: gd (definition), grr (references),
+-- gra (code action), grn (rename), gri (implementation), K (hover),
+-- <C-S> (signature help). Default diagnostic keymaps: [d/]d, <C-W>d.
 
 local map = vim.keymap.set
 
@@ -36,9 +35,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(args)
         local bufnr = args.buf
         local client = vim.lsp.get_client_by_id(args.data.client_id)
-
-        -- gd is the only LSP keymap not provided by 0.12 defaults
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = bufnr, desc = "Go to definition" })
 
         if client and client.name == "roslyn" then
             vim.keymap.set("n", "<leader>lR", "<cmd>Roslyn restart<cr>", { buffer = bufnr, desc = "Restart Roslyn" })

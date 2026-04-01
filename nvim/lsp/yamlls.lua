@@ -4,6 +4,6 @@
 
 return {
     cmd = { "yaml-language-server", "--stdio" },
-    filetypes = { "yaml", "yml" },
+    filetypes = { "yaml" },
     root_markers = { ".git" },
 }

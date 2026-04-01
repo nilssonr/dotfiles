@@ -30,7 +30,7 @@ vim.api.nvim_create_autocmd("PackChanged", {
 -- Immediate plugins (needed for first draw / always-on)
 vim.pack.add({
     "https://github.com/projekt0n/github-nvim-theme",
-    { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "master" },
+    { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
     "https://github.com/nvim-lua/plenary.nvim",
     "https://github.com/nvim-telescope/telescope.nvim",
     "https://github.com/nvim-telescope/telescope-fzf-native.nvim",

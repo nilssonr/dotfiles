@@ -6,19 +6,9 @@
 
 local function dotnet_suite_root()
     local cwd = vim.fn.getcwd()
-    local repo = vim.fn.fnamemodify(cwd, ":t")
-
-    local overrides = {}
-
-    local override = overrides[repo] or overrides[cwd]
-    if override then
-        return vim.fn.fnamemodify(cwd .. "/" .. override, ":p")
-    end
-
     if vim.fn.isdirectory(cwd .. "/src") == 1 then
         return cwd .. "/src"
     end
-
     return cwd
 end
 

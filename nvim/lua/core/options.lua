@@ -7,7 +7,6 @@
 -- UI
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.termguicolors = true
 vim.opt.signcolumn = "yes"
 vim.opt.wrap = true
 vim.opt.scrolloff = 8
@@ -33,7 +32,7 @@ vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 
 -- Visuals
-vim.opt.conceallevel = 0 -- disable conceal (no italics/fancy rendering)
+vim.opt.conceallevel = 2 -- render-markdown.nvim needs >= 1
 vim.opt.foldmethod = "expr" -- use Tree-sitter for folding
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- Tree-sitter fold expression
 vim.opt.foldlevel = 99 -- start unfolded
@@ -53,7 +52,7 @@ local function update_git_dirty()
     vim.fn.jobstart({ "git", "status", "--porcelain" }, {
         stdout_buffered = true,
         on_stdout = function(_, data)
-            _G.statusline_git_dirty = data and #data > 1 or (data[1] and data[1] ~= "")
+            _G.statusline_git_dirty = data ~= nil and (#data > 1 or (data[1] ~= nil and data[1] ~= ""))
             vim.cmd("redrawstatus")
         end,
     })
