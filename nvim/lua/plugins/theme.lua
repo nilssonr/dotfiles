@@ -18,13 +18,6 @@ require("github-theme").setup({
 })
 vim.cmd.colorscheme("github_dark_dimmed")
 
--- Transparent background — let Alacritty opacity show through
-vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
-vim.api.nvim_set_hl(0, "NormalNC", { bg = "NONE" })
-vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
-vim.api.nvim_set_hl(0, "LineNr", { bg = "NONE" })
-vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "NONE" })
-
 -- Statusline — subtle bar that sits above tmux
 vim.api.nvim_set_hl(0, "StatusLine", { bg = "#22272e", fg = "#768390" })
 vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "#22272e", fg = "#545d68" })
