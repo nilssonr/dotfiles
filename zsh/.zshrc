@@ -28,7 +28,7 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
-export PATH="$HOME/.local/share/bob/nvim-bin:$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/share/bob/nvim-bin:$HOME/.local/bin:$HOME/.dotnet/tools:$PATH"
 
 # Avoid forking `go env` on every shell start
 export PATH="${GOPATH:-$HOME/go}/bin:$PATH"

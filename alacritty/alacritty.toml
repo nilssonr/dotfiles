@@ -12,12 +12,12 @@ TERM = "xterm-256color"
 [window]
 decorations = "Buttonless"
 dynamic_padding = false
-opacity = 1
+opacity = 0.5
 blur = true
 
 [window.padding]
 x = 4
-y = 0
+y = 4
 
 [font]
 size = 13
@@ -28,3 +28,8 @@ style = "Regular"
 
 [scrolling]
 history = 100000
+
+[[keyboard.bindings]]
+key = "F"
+mods = "Command|Shift"
+action = "ToggleSimpleFullscreen"
