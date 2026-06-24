@@ -82,5 +82,5 @@ fi
 echo ""
 echo "Done. Next steps:"
 echo "  - Open tmux and press prefix + I to install plugins"
-echo "  - Open nvim and run :Lazy sync"
+echo "  - Open nvim (plugins install automatically on first launch via vim.pack), then run :checkhealth"
 echo "  - Restart your shell or run: source ~/.zshenv && source ~/.config/zsh/.zshrc"
