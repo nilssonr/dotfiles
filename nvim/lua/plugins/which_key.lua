@@ -20,4 +20,5 @@ wk.add({
     { "<leader>d", group = "debug" },
     { "<leader>b", group = "buffer" },
     { "<leader>t", group = "test" },
+    { "<leader>x", group = "trouble" },
 })

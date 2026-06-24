@@ -54,6 +54,11 @@ vim.schedule(function()
         "https://github.com/NeogitOrg/neogit",
         "https://github.com/nvim-tree/nvim-tree.lua",
         "https://github.com/MeanderingProgrammer/render-markdown.nvim",
+        "https://github.com/stevearc/conform.nvim",
+        { src = "https://github.com/nvim-treesitter/nvim-treesitter-textobjects", version = "main" },
+        "https://github.com/kylechui/nvim-surround",
+        "https://github.com/folke/todo-comments.nvim",
+        "https://github.com/folke/trouble.nvim",
     })
     require("plugins.which_key")
     require("plugins.autopairs")
@@ -61,6 +66,11 @@ vim.schedule(function()
     require("plugins.neogit")
     require("plugins.nvim_tree")
     require("plugins.render_markdown")
+    require("plugins.conform")
+    require("plugins.textobjects")
+    require("plugins.surround")
+    require("plugins.todo_comments")
+    require("plugins.trouble")
 end)
 
 -- Roslyn: load on C#/Razor filetype

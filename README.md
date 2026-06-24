@@ -117,13 +117,14 @@ nvim/
       keymaps.lua           -- global keymaps + LspAttach buffer keymaps
       autocmds.lua          -- autocommands (yank highlight, format-on-save, etc.)
       diagnostics.lua       -- diagnostic UI config
-      format.lua            -- formatting (XML via xmllint, Erlang via erlfmt, else LSP)
+      format.lua            -- formatting (XML via xmllint, Erlang via erlfmt, else conform→LSP)
       pack.lua              -- vim.pack.add() calls + plugin loading (immediate/deferred/lazy)
       util.lua              -- shared helpers
     plugins/                -- one file per plugin (config + keymaps)
       theme.lua  treesitter.lua  telescope.lua  gitsigns.lua  completion.lua (blink.cmp)
       which_key.lua  autopairs.lua  diffview.lua  neogit.lua  nvim_tree.lua
       render_markdown.lua  roslyn.lua  dap.lua  neotest.lua
+      conform.lua  textobjects.lua  surround.lua  todo_comments.lua  trouble.lua
     lsp/                    -- one file per language server (see table below)
     ui/
       intent.lua            -- startup "What are you here to do?" screen
@@ -144,9 +145,18 @@ Formatting runs **on save** for real file buffers. Manual trigger: `<leader>cf`.
 
 - XML: uses `xmllint` (`brew install libxml2`)
 - Erlang: uses `erlfmt` (ELP doesn't format)
-- Everything else: LSP format
+- Everything else: [conform.nvim](https://github.com/stevearc/conform.nvim), which runs a
+  configured formatter and falls back to LSP formatting when none is installed.
 
-Routing lives in `lua/core/format.lua`.
+Routing lives in `lua/core/format.lua`; conform's formatter map is in `lua/plugins/conform.lua`.
+
+Formatter binaries (optional — conform falls back to LSP if absent):
+
+| Filetype | Formatter | Install |
+|--------- |---------- |---------|
+| Lua | stylua | `brew install stylua` |
+| Go | goimports (+ gofmt) | `go install golang.org/x/tools/cmd/goimports@latest` |
+| JS/TS/JSON/YAML/HTML/CSS/Markdown | prettierd / prettier | `npm i -g @fsouza/prettierd` |
 
 ### Language servers
 
@@ -249,19 +259,33 @@ Leader is `Space`.
 | `<leader><leader>` | Buffers (Telescope)           |
 | `<leader>fh`     | Help (Telescope)                |
 | `<leader>fb`     | File browser (nvim-tree)        |
+| `<leader>ft`     | Find TODOs (todo-comments)      |
 | `]h` / `[h`      | Next/prev git hunk (gitsigns)   |
-| `<leader>gd` / `<leader>gh` | Diffview toggle / file history |
+| `]t` / `[t`      | Next/prev TODO comment          |
+| `<leader>gd`     | Diffview toggle (working tree)  |
+| `<leader>gc`     | Diffview compare against rev/branch (prompt) |
+| `<leader>gh` / `<leader>gf` | Diffview repo / current-file history |
+| `<leader>gb` / `<leader>gl` / `<leader>gC` | Git branches / commits / current-file commits (Telescope) |
 | `<leader>gg`     | Neogit                          |
 | `<leader>mr`     | Toggle markdown render          |
+| `af` / `if` / `ac` / `ic` / `aa` / `ia` | Textobjects: a/in function / class / argument |
+| `]m` / `[m` / `]]` / `[[` | Next/prev function / class (treesitter motion) |
+| `<leader>a` / `<leader>A` | Swap parameter with next / prev |
+| `ys` / `ds` / `cs` | Add / delete / change surround (nvim-surround) |
 | `gd` / `grr` / `gri` | LSP definition / references / implementation |
 | `grn` / `gra` / `K` / `<C-S>` | LSP rename / code action / hover / signature |
+| `<leader>ci`     | Toggle inlay hints              |
 | `<leader>lR`     | Restart Roslyn (C# buffers)     |
 | `[d` / `]d` / `<C-W>d` | Prev / next / float diagnostic |
+| `<leader>xx` / `<leader>xX` | Trouble: workspace / buffer diagnostics |
+| `<leader>xr` / `<leader>xs` | Trouble: LSP references / document symbols |
+| `<leader>xq` / `<leader>xl` | Trouble: quickfix / location list |
 | `<F5>`           | DAP continue                    |
 | `<F10>/<F11>/<F12>` | DAP step over/into/out       |
 | `<leader>db` / `<leader>dB` | Toggle / conditional breakpoint |
 | `<leader>dr`     | DAP REPL                        |
 | `Ctrl+h/j/k/l`   | Navigate vim/tmux panes         |
+| `<Esc>`          | Clear search highlight          |
 
 LSP and diagnostic navigation use Neovim 0.12 built-in defaults (`g r`-prefixed maps).
 
