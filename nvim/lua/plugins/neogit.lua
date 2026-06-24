@@ -8,6 +8,6 @@ require("neogit").setup({
     },
 })
 
-vim.keymap.set("n", "<leader>ng", function()
+vim.keymap.set("n", "<leader>gg", function()
     require("neogit").open()
 end, { desc = "Neogit" })

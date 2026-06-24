@@ -4,8 +4,6 @@
 -- LSP-only completion with CR to accept, Tab/S-Tab to navigate.
 
 require("blink.cmp").setup({
-    -- vim.pack clones main (not a tag), so tell blink which release binary to use
-    fuzzy = { prebuilt_binaries = { force_version = "v1.10.1" } },
     keymap = {
         preset = "none",
         ["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },

@@ -26,7 +26,7 @@ map("n", "<leader>bD", function()
 end, { desc = "Close all buffers (prompt if unsaved)" })
 
 -- Format — routes through core.format which handles XML specially, falls back to LSP
-map("n", "<leader>f", function()
+map("n", "<leader>cf", function()
     require("core.format").format_current_buffer()
 end, { desc = "Format buffer" })
 
