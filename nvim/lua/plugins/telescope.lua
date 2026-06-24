@@ -34,5 +34,72 @@ vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Help" })
 
 -- Git pickers (each previews a diff; select a commit/branch to feed diffview)
 vim.keymap.set("n", "<leader>gb", builtin.git_branches, { desc = "Git branches" })
-vim.keymap.set("n", "<leader>gl", builtin.git_commits, { desc = "Git commits (log)" })
-vim.keymap.set("n", "<leader>gC", builtin.git_bcommits, { desc = "Git commits (current file)" })
+
+-- Commit-log entry maker that surfaces date + author next to the sha/subject.
+-- Fields come tab-delimited from a custom --pretty format; value stays the sha
+-- so telescope's diff preview and downstream actions keep working.
+local make_entry = require("telescope.make_entry")
+local entry_display = require("telescope.pickers.entry_display")
+
+local function commits_entry_maker(opts)
+    opts = opts or {}
+    local displayer = entry_display.create({
+        separator = "  ",
+        items = {
+            { width = 8 },        -- short sha
+            { width = 10 },       -- date (YYYY-MM-DD)
+            { width = 16 },       -- author
+            { remaining = true }, -- subject
+        },
+    })
+    local function make_display(entry)
+        return displayer({
+            { entry.value, "TelescopeResultsIdentifier" },
+            { entry.date, "TelescopeResultsComment" },
+            { entry.author, "TelescopeResultsFunction" },
+            entry.msg,
+        })
+    end
+    return function(line)
+        if line == "" then
+            return nil
+        end
+        local sha, date, author, msg = string.match(line, "([^\t]+)\t([^\t]+)\t([^\t]+)\t(.*)")
+        if not sha then
+            sha, date, author, msg = line, "", "", "<empty commit message>"
+        end
+        return make_entry.set_default_entry_mt({
+            value = sha,
+            ordinal = sha .. " " .. date .. " " .. author .. " " .. msg,
+            msg = msg,
+            date = date,
+            author = author,
+            display = make_display,
+            current_file = opts.current_file,
+        }, opts)
+    end
+end
+
+-- tformat (not format): terminates every entry with a newline like the default
+-- --pretty=oneline. With plain `format:` the last line has no trailing newline,
+-- which leaves telescope's async finder showing empty results until the first
+-- keystroke forces a refresh.
+local commits_format = "--pretty=tformat:%h%x09%ad%x09%an%x09%s"
+
+-- Whole-repo log
+vim.keymap.set("n", "<leader>gl", function()
+    builtin.git_commits({
+        git_command = { "git", "log", commits_format, "--date=short", "--abbrev-commit", "--", "." },
+        entry_maker = commits_entry_maker(),
+    })
+end, { desc = "Git commits (log)" })
+
+-- Commits touching the current file
+vim.keymap.set("n", "<leader>gC", function()
+    local current_file = vim.api.nvim_buf_get_name(0)
+    builtin.git_bcommits({
+        current_file = current_file,
+        git_command = { "git", "log", commits_format, "--date=short", "--abbrev-commit", "--follow" },
+        entry_maker = commits_entry_maker({ current_file = current_file }),
+    })
+end, { desc = "Git commits (current file)" })
