@@ -71,8 +71,14 @@ function M.format_current_buffer()
         return
     end
 
-    -- Everything else: LSP format
-    vim.lsp.buf.format({ async = false, timeout_ms = 5000 })
+    -- Everything else: conform (formatter first, LSP fallback). If conform
+    -- isn't loaded yet, fall back to a direct LSP format.
+    local ok, conform = pcall(require, "conform")
+    if ok then
+        conform.format({ async = false, timeout_ms = 5000, lsp_format = "fallback" })
+    else
+        vim.lsp.buf.format({ async = false, timeout_ms = 5000 })
+    end
 end
 
 return M

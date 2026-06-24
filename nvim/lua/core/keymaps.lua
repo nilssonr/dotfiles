@@ -39,8 +39,28 @@ vim.api.nvim_create_autocmd("LspAttach", {
         if client and client.name == "roslyn" then
             vim.keymap.set("n", "<leader>lR", "<cmd>Roslyn restart<cr>", { buffer = bufnr, desc = "Restart Roslyn" })
         end
+
+        -- Inlay hints on by default for any server that supports them
+        if client and client:supports_method("textDocument/inlayHint") then
+            vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+        end
     end,
 })
+
+-- Toggle inlay hints globally
+map("n", "<leader>ci", function()
+    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }))
+end, { desc = "Toggle inlay hints" })
+
+-- Editing QoL
+map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
+map("n", "n", "nzzzv", { desc = "Next search (centered)" })
+map("n", "N", "Nzzzv", { desc = "Prev search (centered)" })
+map("n", "<C-d>", "<C-d>zz", { desc = "Half page down (centered)" })
+map("n", "<C-u>", "<C-u>zz", { desc = "Half page up (centered)" })
+-- Move the visual selection up/down, re-indenting as it goes
+map("x", "J", ":m '>+1<cr>gv=gv", { desc = "Move selection down" })
+map("x", "K", ":m '<-2<cr>gv=gv", { desc = "Move selection up" })
 
 -- Terminal
 map("t", "<Esc>", "<C-\\><C-n>", { desc = "Terminal normal mode" })

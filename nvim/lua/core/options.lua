@@ -47,6 +47,17 @@ vim.opt.foldlevel = 99 -- start unfolded
 vim.opt.foldlevelstart = 99 -- open folds on buffer read
 vim.opt.clipboard = "unnamedplus"
 
+-- Editing QoL
+vim.opt.inccommand = "split"      -- live preview of :substitute
+vim.opt.splitright = true         -- vertical splits open to the right
+vim.opt.splitbelow = true         -- horizontal splits open below
+vim.opt.confirm = true            -- prompt instead of failing on unsaved quit
+vim.opt.smoothscroll = true       -- scroll by screen line through wrapped lines
+vim.opt.cursorline = true         -- highlight the current line
+vim.opt.pumheight = 10            -- cap popup menu height
+vim.opt.list = true               -- reveal hidden whitespace
+vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+
 -- Global floating window border
 vim.o.winborder = "rounded"
 

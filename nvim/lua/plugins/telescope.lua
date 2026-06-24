@@ -31,3 +31,8 @@ vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find files" })
 vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Live grep" })
 vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "Buffers" })
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Help" })
+
+-- Git pickers (each previews a diff; select a commit/branch to feed diffview)
+vim.keymap.set("n", "<leader>gb", builtin.git_branches, { desc = "Git branches" })
+vim.keymap.set("n", "<leader>gl", builtin.git_commits, { desc = "Git commits (log)" })
+vim.keymap.set("n", "<leader>gC", builtin.git_bcommits, { desc = "Git commits (current file)" })

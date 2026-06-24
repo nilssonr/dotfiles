@@ -10,6 +10,7 @@ brew "llvm"
 brew "make"
 brew "lazygit"
 brew "gh"
+brew "stylua"
 
 # Optional
 # brew "fnm"
