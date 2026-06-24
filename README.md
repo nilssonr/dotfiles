@@ -29,75 +29,51 @@ Each directory maps directly to `~/.config/<name>`:
 | `tmux/`      | tmux config, scripts, TPM plugins      |
 | `nvim/`      | Neovim (Lua, native `vim.pack`)        |
 | `zsh/`       | Shell config (requires `ZDOTDIR`)      |
-| `git/`       | Global gitignore                       |
 | `yabai/`     | Tiling window manager (macOS)          |
 | `skhd/`      | Hotkey daemon (macOS)                  |
-
-Additional files:
-
-- `Brewfile` — declarative Homebrew dependencies
-- `install.sh` — idempotent bootstrap script
 
 ---
 
 ## Quickstart (new machine)
 
-### Automated
-
 ```sh
+# 1. Prerequisites
 xcode-select --install
 # Install Homebrew from https://brew.sh
 
-git clone https://github.com/nilssonr/dotfiles.git ~/Code/dotfiles
-cd ~/Code/dotfiles
-bash install.sh
-```
-
-The install script will:
-1. Run `brew bundle` from the Brewfile
-2. Symlink config directories into `~/.config`
-3. Set up `ZDOTDIR` in `~/.zshenv`
-4. Clone Oh My Zsh + zsh-autosuggestions (if missing)
-5. Clone TPM (if missing)
-
-After running, open tmux and press `prefix + I` to install tmux plugins, then open nvim — plugins install automatically on first launch via `vim.pack`. Run `:checkhealth` to confirm.
-
-### Manual
-
-If you prefer to do it step by step:
-
-```sh
-# 1. Clone
+# 2. Clone
 git clone https://github.com/nilssonr/dotfiles.git ~/Code/dotfiles
 
-# 2. Symlink
+# 3. Symlink config directories into ~/.config
 DOTFILES="$HOME/Code/dotfiles"
 mkdir -p "$HOME/.config"
-for d in alacritty tmux nvim zsh yabai skhd git; do
+for d in alacritty tmux nvim zsh yabai skhd; do
   ln -snf "$DOTFILES/$d" "$HOME/.config/$d"
 done
 
-# 3. ZDOTDIR
+# 4. ZDOTDIR
 cat <<'EOF' > ~/.zshenv
 export ZDOTDIR="$HOME/.config/zsh"
 source "$ZDOTDIR/.zshenv"
 EOF
 
-# 4. Homebrew packages
-brew bundle --file="$DOTFILES/Brewfile"
+# 5. Homebrew packages
+brew install tmux neovim fzf ripgrep fd git tree-sitter llvm make lazygit gh stylua
+brew install --cask alacritty font-jetbrains-mono-nerd-font
 
-# 5. Oh My Zsh + autosuggestions
+# 6. Oh My Zsh + autosuggestions
 git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git ~/.config/zsh/oh-my-zsh
 git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git \
   ~/.config/zsh/oh-my-zsh/custom/plugins/zsh-autosuggestions
 
-# 6. TPM
+# 7. TPM
 mkdir -p ~/.config/tmux/plugins
 git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
-
-# 7. Fonts
-brew install --cask font-jetbrains-mono-nerd-font
 ```
+
+After cloning, open tmux and press `prefix + I` to install tmux plugins, then open nvim — plugins install automatically on first launch via `vim.pack`. Run `:checkhealth` to confirm.
+
+Language-specific tools (formatters, debuggers, extra servers) are installed on demand — see the Neovim sections below.
 
 ---
 
