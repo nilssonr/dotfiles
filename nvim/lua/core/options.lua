@@ -26,6 +26,14 @@ if vim.fn.isdirectory(swap_dir) == 0 then
 end
 vim.opt.directory = { swap_dir .. "//" }
 
+-- Persistent undo — survives restarts, kept out of project trees
+local undo_dir = vim.fn.expand("~/.nvim-undo")
+if vim.fn.isdirectory(undo_dir) == 0 then
+    vim.fn.mkdir(undo_dir, "p")
+end
+vim.opt.undofile = true
+vim.opt.undodir = { undo_dir }
+
 -- Indentation — conservative defaults; EditorConfig sets per-buffer
 vim.opt.expandtab = true
 vim.opt.shiftwidth = 4
@@ -42,32 +50,14 @@ vim.opt.clipboard = "unnamedplus"
 -- Global floating window border
 vim.o.winborder = "rounded"
 
--- noinsert ensures the first completion item is pre-selected
-vim.opt.completeopt = { "menu", "menuone", "noinsert" }
-
--- Statusline: repo-level dirty check (cached)
-_G.statusline_git_dirty = false
-
-local function update_git_dirty()
-    vim.fn.jobstart({ "git", "status", "--porcelain" }, {
-        stdout_buffered = true,
-        on_stdout = function(_, data)
-            _G.statusline_git_dirty = data ~= nil and (#data > 1 or (data[1] ~= nil and data[1] ~= ""))
-            vim.cmd("redrawstatus")
-        end,
-    })
-end
-
--- Update on save, focus, and directory change
-vim.api.nvim_create_autocmd({ "BufWritePost", "FocusGained", "DirChanged" }, {
-    callback = update_git_dirty,
-})
-vim.defer_fn(update_git_dirty, 100)  -- initial check
-
+-- Statusline: branch + dirty indicator, sourced from gitsigns.
+-- Dirty reflects the *current file's* working-tree changes (added/changed/removed).
+-- The %{...} expression re-evaluates on every redraw, so no refresh autocmd is needed.
 function _G.statusline_git()
-    local head = vim.b.gitsigns_head
-    if not head or head == "" then return "" end
-    return head .. (_G.statusline_git_dirty and "*" or "")
+    local dict = vim.b.gitsigns_status_dict
+    if not dict or not dict.head or dict.head == "" then return "" end
+    local dirty = (dict.added or 0) + (dict.changed or 0) + (dict.removed or 0) > 0
+    return dict.head .. (dirty and "*" or "")
 end
 
 vim.opt.statusline = table.concat({

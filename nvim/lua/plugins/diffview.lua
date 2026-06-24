@@ -15,5 +15,5 @@ local function toggle()
     end
 end
 
-vim.keymap.set("n", "<leader>df", toggle, { desc = "Diffview toggle" })
-vim.keymap.set("n", "<leader>dh", "<cmd>DiffviewFileHistory<cr>", { desc = "Diffview file history" })
+vim.keymap.set("n", "<leader>gd", toggle, { desc = "Diffview toggle" })
+vim.keymap.set("n", "<leader>gh", "<cmd>DiffviewFileHistory<cr>", { desc = "Diffview file history" })

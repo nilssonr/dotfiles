@@ -140,7 +140,7 @@ Neovim's built-in EditorConfig support is active. Global indentation in `options
 
 ### Formatting
 
-Formatting runs **on save** for real file buffers. Manual trigger: `<leader>f`.
+Formatting runs **on save** for real file buffers. Manual trigger: `<leader>cf`.
 
 - XML: uses `xmllint` (`brew install libxml2`)
 - Erlang: uses `erlfmt` (ELP doesn't format)
@@ -243,15 +243,15 @@ Leader is `Space`.
 | `<leader>w`      | Write buffer                    |
 | `<leader>q` / `<leader>Q` | Quit window / quit all (force) |
 | `<leader>bd` / `<leader>bD` | Close buffer / close all   |
-| `<leader>f`      | Format buffer                   |
+| `<leader>cf`     | Format buffer                   |
 | `<leader>ff`     | Find files (Telescope)          |
 | `<leader>fg`     | Live grep (Telescope)           |
 | `<leader><leader>` | Buffers (Telescope)           |
 | `<leader>fh`     | Help (Telescope)                |
 | `<leader>fb`     | File browser (nvim-tree)        |
 | `]h` / `[h`      | Next/prev git hunk (gitsigns)   |
-| `<leader>df` / `<leader>dh` | Diffview toggle / file history |
-| `<leader>ng`     | Neogit                          |
+| `<leader>gd` / `<leader>gh` | Diffview toggle / file history |
+| `<leader>gg`     | Neogit                          |
 | `<leader>mr`     | Toggle markdown render          |
 | `gd` / `grr` / `gri` | LSP definition / references / implementation |
 | `grn` / `gra` / `K` / `<C-S>` | LSP rename / code action / hover / signature |
@@ -259,7 +259,7 @@ Leader is `Space`.
 | `[d` / `]d` / `<C-W>d` | Prev / next / float diagnostic |
 | `<F5>`           | DAP continue                    |
 | `<F10>/<F11>/<F12>` | DAP step over/into/out       |
-| `<leader>b` / `<leader>B` | Toggle / conditional breakpoint |
+| `<leader>db` / `<leader>dB` | Toggle / conditional breakpoint |
 | `<leader>dr`     | DAP REPL                        |
 | `Ctrl+h/j/k/l`   | Navigate vim/tmux panes         |
 
