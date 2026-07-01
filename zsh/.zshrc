@@ -150,3 +150,13 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# Ollama — local LLM tuning for agentic (OpenCode) use.
+# Larger context so agent sessions don't silently truncate; q8_0 KV cache
+# (requires flash attention) halves KV memory; a single slot gives the whole
+# context to one request; keep the model resident to avoid cold reloads.
+export OLLAMA_FLASH_ATTENTION=1
+export OLLAMA_KV_CACHE_TYPE=q8_0
+export OLLAMA_NUM_PARALLEL=1
+export OLLAMA_KEEP_ALIVE=24h
+export OLLAMA_CONTEXT_LENGTH=32768
