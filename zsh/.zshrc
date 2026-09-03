@@ -137,9 +137,49 @@ zstyle ':completion:*' list-colors 'di=34:ln=36:ex=32'
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
 [ -d /opt/homebrew/opt/llvm ] && export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
-# Pre-extracted eqwalizer JAR — avoids race condition when ELP spawns
-# parallel workers that each try to extract the JAR to a temp path.
-export ELP_EQWALIZER_PATH="$HOME/.local/share/eqwalizer.jar"
+# eqWAlizer JAR for ELP. Without ELP_EQWALIZER_PATH every elp run extracts
+# its embedded ~10 MB jar into $TMPDIR and leaves it there (a day of gates
+# left 21 copies). With the variable set, elp uses that file instead, but it
+# MUST match the installed elp: an older jar dies with a JSON "illegal
+# discriminator" error on every module. So the override is exported only
+# while the jar is newer than the elp binary. After
+# `brew upgrade erlang-language-platform`, run `elp-eqwalizer-sync`, which
+# pulls the embedded jar straight out of the new binary.
+elp-eqwalizer-sync() {
+  local jar="$HOME/.local/share/eqwalizer.jar" elp
+  elp="$(readlink -f "$(command -v elp)")" || { echo "elp not installed" >&2; return 1; }
+  # brew installs a wrapper script in bin/; the binary is in libexec/.
+  [[ -f "${elp:h}/../libexec/elp" ]] && elp="${elp:h}/../libexec/elp"
+  mkdir -p "${jar:h}"
+  python3 - "$elp" "$jar" <<'PY' || return 1
+import io, struct, sys, zipfile
+elp, out = sys.argv[1], sys.argv[2]
+data = open(elp, "rb").read()
+pos = 0
+while (eocd := data.find(b"PK\x05\x06", pos)) >= 0:
+    pos = eocd + 4
+    cd_size, cd_offset, comment = struct.unpack("<IIH", data[eocd + 12:eocd + 22])
+    start, end = eocd - cd_size - cd_offset, eocd + 22 + comment
+    if start < 0 or data[start:start + 2] != b"PK":
+        continue
+    blob = data[start:end]
+    try:
+        with zipfile.ZipFile(io.BytesIO(blob)) as z:
+            if b"com.whatsapp.eqwalizer.Main" in z.read("META-INF/MANIFEST.MF"):
+                open(out, "wb").write(blob)
+                sys.exit(0)
+    except (zipfile.BadZipFile, KeyError):
+        continue
+sys.exit("no eqwalizer jar found in " + elp)
+PY
+  export ELP_EQWALIZER_PATH="$jar"
+  echo "eqwalizer jar synced from $elp"
+}
+if (( $+commands[elp] )) && [[ "$HOME/.local/share/eqwalizer.jar" -nt "$(readlink -f "$commands[elp]")" ]]; then
+  export ELP_EQWALIZER_PATH="$HOME/.local/share/eqwalizer.jar"
+elif (( $+commands[elp] )) && [[ -o interactive ]]; then
+  echo "elp: eqwalizer jar missing or older than elp, run elp-eqwalizer-sync" >&2
+fi
 
 fpath=("$ZDOTDIR/completions" $fpath)
 autoload -Uz compinit

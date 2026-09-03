@@ -149,7 +149,7 @@ All LSP servers are installed **explicitly** — Neovim does not download or man
 | YAML           | yaml-language-server           | `brew install yaml-language-server`        |
 | TOML           | taplo                          | `brew install taplo`                       |
 | Lua            | lua-language-server            | `brew install lua-language-server`         |
-| Erlang         | elp (+ eqwalizer)              | Install [ELP](https://github.com/WhatsApp/erlang-language-platform); jar at `ELP_EQWALIZER_PATH` (see `.zshrc`) |
+| Erlang         | elp (+ eqwalizer)              | `brew install erlang-language-platform`, then `elp-eqwalizer-sync` after every upgrade (see `.zshrc`) |
 | C#             | Roslyn (via roslyn.nvim)       | Requires .NET SDK (see below)              |
 
 Each server is one file under `lua/lsp/<name>.lua`. The active list is enabled in `init.lua` via `vim.lsp.enable` (servers whose binary isn't on `PATH` are skipped). Add a server by dropping a file in `lua/lsp/` and adding its name to that list.
