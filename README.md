@@ -52,14 +52,15 @@ for d in alacritty tmux nvim zsh yabai skhd; do
 done
 
 # 4. ZDOTDIR
-cat <<'EOF' > ~/.zshenv
-export ZDOTDIR="$HOME/.config/zsh"
-source "$ZDOTDIR/.zshenv"
-EOF
+echo 'export ZDOTDIR="$HOME/.config/zsh"' > ~/.zshenv
 
 # 5. Homebrew packages
-brew install tmux neovim fzf ripgrep fd git tree-sitter llvm make lazygit gh stylua
+brew install zsh tmux neovim fzf fnm ripgrep fd git tree-sitter llvm make lazygit gh stylua
 brew install --cask alacritty font-jetbrains-mono-nerd-font
+
+# 5b. Login shell: Homebrew zsh (tmux.conf and alacritty.toml point at it)
+echo /opt/homebrew/bin/zsh | sudo tee -a /etc/shells
+chsh -s /opt/homebrew/bin/zsh
 
 # 6. Oh My Zsh + autosuggestions
 git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git ~/.config/zsh/oh-my-zsh
@@ -281,7 +282,12 @@ LSP and diagnostic navigation use Neovim 0.12 built-in defaults (`g r`-prefixed 
 | Key       | Action                           |
 |---------- |----------------------------------|
 | `p`       | Project picker (`cproj`)         |
-| `Ctrl+P`  | Project picker widget            |
+| `Ctrl+P`  | Project picker widget (replaces previous-history) |
+| `Ctrl+R`  | fzf history search               |
+| `Ctrl+T`  | fzf file picker                  |
+| `Alt+C`   | fzf cd into subdirectory         |
+
+`fzf --zsh` and `codex completion zsh` output is cached and regenerated only when the binary changes (`_zsh_cache` in `.zshrc`). To force a rebuild, delete `~/.cache/zsh/fzf.zsh` or `zsh/oh-my-zsh/cache/completions/_codex*`.
 
 ### yabai / skhd (macOS)
 
