@@ -77,7 +77,8 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = { "cs", "razor" },
     once = true,
     callback = function()
-        vim.pack.add({ "https://github.com/seblyng/roslyn.nvim" })
+        -- plugins/roslyn.lua does its own vim.pack.add (config must precede
+        -- the plugin's vim.lsp.enable)
         require("plugins.roslyn")
     end,
 })

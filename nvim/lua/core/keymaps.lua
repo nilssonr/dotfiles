@@ -39,7 +39,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         local client = vim.lsp.get_client_by_id(args.data.client_id)
 
         if client and client.name == "roslyn" then
-            vim.keymap.set("n", "<leader>lR", "<cmd>Roslyn restart<cr>", { buffer = bufnr, desc = "Restart Roslyn" })
+            vim.keymap.set("n", "<leader>lR", "<cmd>lsp restart roslyn<cr>", { buffer = bufnr, desc = "Restart Roslyn" })
         end
 
         -- Prefer LSP folding when supported; treesitter foldexpr is the default
