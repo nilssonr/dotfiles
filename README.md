@@ -93,23 +93,23 @@ nvim/
       keymaps.lua           -- global keymaps + LspAttach buffer keymaps
       autocmds.lua          -- autocommands (yank highlight, format-on-save, etc.)
       diagnostics.lua       -- diagnostic UI config
-      format.lua            -- formatting (XML via xmllint, Erlang via erlfmt, else conform→LSP)
+      format.lua            -- format entry point (conform→LSP) + xmllint helper for XML
       pack.lua              -- vim.pack.add() calls + plugin loading (immediate/deferred/lazy)
       util.lua              -- shared helpers
     plugins/                -- one file per plugin (config + keymaps)
       theme.lua  treesitter.lua  telescope.lua  gitsigns.lua  completion.lua (blink.cmp)
-      which_key.lua  autopairs.lua  diffview.lua  neogit.lua  nvim_tree.lua
+      which_key.lua  autopairs.lua  diffview.lua (diffview-plus)  neogit.lua  nvim_tree.lua
       render_markdown.lua  roslyn.lua  dap.lua  neotest.lua
       conform.lua  textobjects.lua  surround.lua  todo_comments.lua  trouble.lua
     lsp/                    -- one file per language server (see table below)
     ui/
       intent.lua            -- startup "What are you here to do?" screen
-  tests/                    -- focused Lua test scripts
+  tests/                    -- focused Lua test scripts (see "Tests" below)
 ```
 
 ### Plugin management
 
-Uses native **`vim.pack`** (Neovim 0.12) — no `lazy.nvim`, no Mason; all external binaries are installed manually. All `vim.pack.add()` calls live in `lua/core/pack.lua`, split into immediate (first draw), deferred (`vim.schedule`), and filetype-lazy groups (roslyn on `cs`/`razor`, neotest on `go`/`cs`). Build steps (treesitter `TSUpdate`, `telescope-fzf-native` `make`, `blink.cmp` binary) run via `PackChanged` autocmd hooks. Plugins install on first launch; versions are pinned in `nvim-pack-lock.json`.
+Uses native **`vim.pack`** (Neovim 0.12) — no `lazy.nvim`, no Mason; all external binaries are installed manually. All `vim.pack.add()` calls live in `lua/core/pack.lua`, split into immediate (first draw), deferred (`vim.schedule`), and filetype-lazy groups (roslyn on `cs`/`razor`; neotest on `go`/`cs` or its first keymap; DAP on `go`/`cs`/`ts`/`js` or its first keymap). Roslyn and neotest call `vim.pack.add` from their own `lua/plugins/*.lua`. Build steps (treesitter `TSUpdate`, `telescope-fzf-native` `make`) run via `PackChanged` autocmd hooks; blink.cmp fetches its own fuzzy binary. Plugins install on first launch; versions are pinned in `nvim-pack-lock.json`.
 
 ### EditorConfig
 
@@ -119,12 +119,15 @@ Neovim's built-in EditorConfig support is active. Global indentation in `options
 
 Formatting runs **on save** for real file buffers. Manual trigger: `<leader>cf`.
 
-- XML: uses `xmllint` (`brew install libxml2`)
-- Erlang: uses `erlfmt` (ELP doesn't format)
-- Everything else: [conform.nvim](https://github.com/stevearc/conform.nvim), which runs a
-  configured formatter and falls back to LSP formatting when none is installed.
+Everything goes through [conform.nvim](https://github.com/stevearc/conform.nvim), which runs a
+configured formatter and falls back to LSP formatting when none is installed. Conform applies
+changes as a minimal diff, so marks and cursor position survive.
 
-Routing lives in `lua/core/format.lua`; conform's formatter map is in `lua/plugins/conform.lua`.
+- XML: custom `xmllint_nodecl` formatter (`brew install libxml2`); does not add an
+  `<?xml ...?>` declaration when the file had none (`core.format.xmllint`)
+- Erlang: conform's built-in `erlfmt` (ELP doesn't format)
+
+The entry point is `lua/core/format.lua`; conform's formatter map is in `lua/plugins/conform.lua`.
 
 Formatter binaries (optional — conform falls back to LSP if absent):
 
@@ -152,27 +155,27 @@ All LSP servers are installed **explicitly** — Neovim does not download or man
 | Erlang         | elp (+ eqwalizer)              | `brew install erlang-language-platform`, then `elp-eqwalizer-sync` after every upgrade (see `.zshrc`) |
 | C#             | Roslyn (via roslyn.nvim)       | Requires .NET SDK (see below)              |
 
-Each server is one file under `lua/lsp/<name>.lua`. The active list is enabled in `init.lua` via `vim.lsp.enable` (servers whose binary isn't on `PATH` are skipped). Add a server by dropping a file in `lua/lsp/` and adding its name to that list.
+Each server is one file under `lua/lsp/<name>.lua`. The active list is enabled in `init.lua` via `vim.lsp.enable`; Neovim skips a server whose binary isn't executable when it would start (logged in `:LspLog`). Add a server by dropping a file in `lua/lsp/` and adding its name to that list.
 
 ### C# (Roslyn)
 
 C# uses **Roslyn** via `seblyng/roslyn.nvim`. Requires the .NET SDK (`dotnet --info`). The Roslyn server payload is expected at `~/.local/share/lsp/roslyn/content/LanguageServer/osx-arm64/`.
+
+`lua/plugins/roslyn.lua` sets the `dotnet <dll>` cmd with `vim.lsp.config` *before* roslyn.nvim's `plugin/` file runs (`vim.pack.add(..., { load = false })`, then `packadd`). That file calls `vim.lsp.enable("roslyn")`, which starts the client immediately; if the override came later, the plugin's default cmd (`roslyn-language-server --daemon-mode ...`, found in `~/.dotnet/tools`) would start instead and exit with `Unrecognized command or argument '--daemon-mode'`.
 
 ### Debuggers (DAP)
 
 | Language      | Adapter          | Install                                          |
 |-------------- |----------------- |--------------------------------------------------|
 | Go            | delve            | `brew install delve`                             |
-| TypeScript/JS | vscode-js-debug  | Build locally (see below)                        |
+| TypeScript/JS | vscode-js-debug  | Release tarball (see below)                      |
 | C#            | netcoredbg       | Build from source (see below)                    |
 
-**vscode-js-debug:**
+**vscode-js-debug:** nvim-dap talks to its DAP server directly (`pwa-node` server adapter); it is configured only when `~/.local/share/nvim/dap/js-debug/src/dapDebugServer.js` exists.
 ```sh
 mkdir -p ~/.local/share/nvim/dap
-cd ~/.local/share/nvim/dap
-git clone --depth=1 https://github.com/microsoft/vscode-js-debug.git
-cd vscode-js-debug
-npm ci && npm run build
+gh release download -R microsoft/vscode-js-debug -p 'js-debug-dap-*.tar.gz' -D /tmp
+tar -xzf /tmp/js-debug-dap-*.tar.gz -C ~/.local/share/nvim/dap
 ```
 
 **netcoredbg (macOS arm64):**
@@ -200,6 +203,14 @@ Neotest provides unified test execution for Go and .NET:
 - `<leader>tr` — re-run last test
 
 Add .NET suite root overrides in `lua/plugins/neotest.lua`.
+
+### Tests
+
+Headless Lua scripts in `nvim/tests/`. Run them from the repo root:
+```sh
+for t in nvim/tests/*.lua; do nvim --clean --headless -l "$t" || echo "FAIL $t"; done
+```
+No output means every test passed; a failing test prints its assertion and exits non-zero.
 
 ---
 
@@ -248,8 +259,8 @@ Leader is `Space`.
 | `]m` / `[m` / `]]` / `[[` | Next/prev function / class (treesitter motion) |
 | `<leader>a` / `<leader>A` | Swap parameter with next / prev |
 | `ys` / `ds` / `cs` | Add / delete / change surround (nvim-surround) |
-| `gd` / `grr` / `gri` | LSP definition / references / implementation |
-| `grn` / `gra` / `K` / `<C-S>` | LSP rename / code action / hover / signature |
+| `<C-]>` / `grr` / `gri` / `grt` | LSP definition / references / implementation / type definition |
+| `grn` / `gra` / `K` / `<C-S>` / `grx` | LSP rename / code action / hover / signature / run codelens |
 | `<leader>ci`     | Toggle inlay hints              |
 | `<leader>lR`     | Restart Roslyn (C# buffers)     |
 | `[d` / `]d` / `<C-W>d` | Prev / next / float diagnostic |

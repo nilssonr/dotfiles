@@ -1,8 +1,9 @@
 -- ===============================================================
 -- Neotest — Test runner (Go, .NET)
 -- ===============================================================
--- Keymaps are registered eagerly so they appear in which-key.
--- The actual neotest setup runs on first FileType go/cs via pack.lua.
+-- Keymaps are registered eagerly so they appear in which-key. Neotest
+-- loads on the first go/cs buffer (core/pack.lua) or the first keymap
+-- press, whichever comes first. M.ensure() is idempotent.
 
 local function dotnet_suite_root()
     local cwd = vim.fn.getcwd()
@@ -19,17 +20,20 @@ local function suite_root()
     return vim.fn.getcwd()
 end
 
--- Eager keymaps (lazy-require pattern)
-vim.keymap.set("n", "<leader>tn", function() require("neotest").run.run() end, { desc = "Test nearest" })
-vim.keymap.set("n", "<leader>tf", function() require("neotest").run.run(vim.fn.expand("%")) end, { desc = "Test file" })
-vim.keymap.set("n", "<leader>ts", function() require("neotest").run.run(suite_root()) end, { desc = "Test suite" })
-vim.keymap.set("n", "<leader>to", function() require("neotest").output.open({ enter = true }) end, { desc = "Test output" })
-vim.keymap.set("n", "<leader>tS", function() require("neotest").summary.toggle() end, { desc = "Test summary" })
-vim.keymap.set("n", "<leader>tr", function() require("neotest").run.run_last() end, { desc = "Test last" })
-
 local M = {}
+local loaded = false
 
-function M.setup()
+function M.ensure()
+    if loaded then
+        return
+    end
+    loaded = true
+    vim.pack.add({
+        "https://github.com/nvim-neotest/nvim-nio",
+        "https://github.com/nvim-neotest/neotest",
+        "https://github.com/nvim-neotest/neotest-go",
+        "https://github.com/Issafalcon/neotest-dotnet",
+    })
     require("neotest").setup({
         adapters = {
             require("neotest-go"),
@@ -37,5 +41,18 @@ function M.setup()
         },
     })
 end
+
+local function neotest()
+    M.ensure()
+    return require("neotest")
+end
+
+-- Eager keymaps
+vim.keymap.set("n", "<leader>tn", function() neotest().run.run() end, { desc = "Test nearest" })
+vim.keymap.set("n", "<leader>tf", function() neotest().run.run(vim.fn.expand("%")) end, { desc = "Test file" })
+vim.keymap.set("n", "<leader>ts", function() neotest().run.run(suite_root()) end, { desc = "Test suite" })
+vim.keymap.set("n", "<leader>to", function() neotest().output.open({ enter = true }) end, { desc = "Test output" })
+vim.keymap.set("n", "<leader>tS", function() neotest().summary.toggle() end, { desc = "Test summary" })
+vim.keymap.set("n", "<leader>tr", function() neotest().run.run_last() end, { desc = "Test last" })
 
 return M

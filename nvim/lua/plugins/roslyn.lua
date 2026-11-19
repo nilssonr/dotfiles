@@ -3,6 +3,8 @@
 -- ===============================================================
 -- Loaded on FileType cs,razor. Configures the Roslyn DLL path,
 -- capabilities (no snippets), and diagnostic cleanup on detach.
+-- roslyn.nvim refreshes diagnostics itself once the project has loaded
+-- (workspace/projectInitializationComplete), so no re-analysis poke is needed.
 
 local dll = vim.fn.expand("~/.local/share/lsp/roslyn/content/LanguageServer/osx-arm64/Microsoft.CodeAnalysis.LanguageServer.dll")
 
@@ -11,43 +13,23 @@ if vim.fn.filereadable(dll) ~= 1 then
     return
 end
 
--- Poke each attached buffer after the project finishes loading to force
--- Roslyn to re-analyze with full project context.  Roslyn sends stale
--- diagnostics (all usings unused) before the solution is loaded; a no-op
--- edit triggers textDocument/didChange which forces a fresh analysis pass.
-vim.api.nvim_create_autocmd("User", {
-    pattern = "RoslynInitialized",
-    callback = function()
-        local client = vim.lsp.get_clients({ name = "roslyn" })[1]
-        if not client then
-            return
-        end
-        for buf in pairs(client.attached_buffers) do
-            local was_modified = vim.bo[buf].modified
-            local first_line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] or ""
-            vim.api.nvim_buf_set_lines(buf, 0, 1, false, { first_line .. " " })
-            vim.api.nvim_buf_set_lines(buf, 0, 1, false, { first_line })
-            vim.bo[buf].modified = was_modified
-        end
-    end,
-})
-
--- Clear stale pull diagnostics on server exit so :Roslyn restart starts clean
+-- Clear stale pull diagnostics on server exit so :lsp restart starts clean
 vim.api.nvim_create_autocmd("LspDetach", {
     callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         if client and client.name == "roslyn" then
             vim.diagnostic.reset(
-                vim.lsp.diagnostic.get_namespace(args.data.client_id, "nil"),
+                vim.lsp.diagnostic.get_namespace(args.data.client_id, true),
                 nil
             )
         end
     end,
 })
 
--- Override the built-in lsp/roslyn.lua cmd and merge our settings.
--- roslyn.nvim's setup() calls vim.lsp.enable("roslyn") — do NOT call it
--- separately or two instances will attach.
+-- Override roslyn.nvim's lsp/roslyn.lua cmd and merge our settings.
+-- This MUST run before roslyn.nvim's plugin/roslyn.lua is sourced: that
+-- file calls vim.lsp.enable("roslyn"), which starts the client for the
+-- current buffer straight away with whatever config exists at that moment.
 vim.lsp.config("roslyn", {
     cmd = {
         "dotnet",
@@ -105,7 +87,10 @@ vim.lsp.config("roslyn", {
     },
 })
 
--- setup() registers roslyn.nvim config and calls vim.lsp.enable("roslyn")
+-- Put roslyn.nvim on the rtp without sourcing plugin/ yet (load = false),
+-- so setup() and the config above are in place before vim.lsp.enable runs.
+vim.pack.add({ "https://github.com/seblyng/roslyn.nvim" }, { load = false })
+
 require("roslyn").setup({
     broad_search = false,
     lock_target = false,
@@ -116,3 +101,9 @@ require("roslyn").setup({
     -- pull diagnostics (textDocument/diagnostic) still work normally.
     filewatching = "off",
 })
+
+-- Now source plugin/roslyn.lua (vim.lsp.enable + commands/autocmds).
+-- Its FileType autocmd that creates :Roslyn misses the buffer that
+-- triggered this load, so create the commands once here.
+vim.cmd.packadd("roslyn.nvim")
+require("roslyn.commands").create_roslyn_commands()

@@ -16,14 +16,13 @@ vim.api.nvim_create_autocmd("PackChanged", {
             vim.cmd("TSUpdate")
         end
         if name == "telescope-fzf-native.nvim" and (kind == "install" or kind == "update") then
-            local dir = ev.data.path or (vim.fn.stdpath("data") .. "/site/pack/core/opt/telescope-fzf-native.nvim")
-            vim.fn.system({ "make", "-C", dir })
+            local out = vim.fn.system({ "make", "-C", ev.data.path })
+            if vim.v.shell_error ~= 0 then
+                vim.notify("telescope-fzf-native build failed:\n" .. out, vim.log.levels.WARN)
+            end
         end
-        if name == "blink.cmp" and (kind == "install" or kind == "update") then
-            -- blink.cmp downloads its own prebuilt binary on first require;
-            -- clear cached module so it re-runs the download check
-            package.loaded["blink.cmp.fuzzy.rust"] = nil
-        end
+        -- blink.cmp needs no hook: it checks/downloads its prebuilt fuzzy
+        -- binary itself during setup.
     end,
 })
 
@@ -36,7 +35,7 @@ vim.pack.add({
     "https://github.com/nvim-telescope/telescope-fzf-native.nvim",
     "https://github.com/lewis6991/gitsigns.nvim",
     "https://github.com/christoomey/vim-tmux-navigator",
-    { src = "https://github.com/saghen/blink.cmp", version = "v1.10.1" },
+    { src = "https://github.com/saghen/blink.cmp", version = vim.version.range("1") },
 })
 
 require("plugins.theme")
@@ -50,7 +49,7 @@ vim.schedule(function()
     vim.pack.add({
         "https://github.com/folke/which-key.nvim",
         "https://github.com/windwp/nvim-autopairs",
-        "https://github.com/sindrets/diffview.nvim",
+        "https://github.com/dlyongemallo/diffview-plus.nvim", -- maintained fork of sindrets/diffview.nvim
         "https://github.com/NeogitOrg/neogit",
         "https://github.com/nvim-tree/nvim-tree.lua",
         "https://github.com/MeanderingProgrammer/render-markdown.nvim",
@@ -78,7 +77,8 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = { "cs", "razor" },
     once = true,
     callback = function()
-        vim.pack.add({ "https://github.com/seblyng/roslyn.nvim" })
+        -- plugins/roslyn.lua does its own vim.pack.add (config must precede
+        -- the plugin's vim.lsp.enable)
         require("plugins.roslyn")
     end,
 })
@@ -88,13 +88,7 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = { "go", "cs" },
     once = true,
     callback = function()
-        vim.pack.add({
-            "https://github.com/nvim-neotest/nvim-nio",
-            "https://github.com/nvim-neotest/neotest",
-            "https://github.com/nvim-neotest/neotest-go",
-            "https://github.com/Issafalcon/neotest-dotnet",
-        })
-        require("plugins.neotest").setup()
+        require("plugins.neotest").ensure()
     end,
 })
 

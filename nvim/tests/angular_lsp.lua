@@ -21,3 +21,4 @@ end
 assert(has("angular.json"), "angular.json root marker missing")
 assert(has("project.json"), "project.json root marker missing")
 assert(type(cfg.cmd) == "function", "angularls cmd should be a function")
+assert(vim.tbl_contains(cfg.filetypes or {}, "htmlangular"), "htmlangular filetype missing")

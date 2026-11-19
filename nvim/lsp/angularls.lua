@@ -52,7 +52,7 @@ return {
 
         return vim.lsp.rpc.start(cmd, dispatchers, { cwd = root_dir })
     end,
-    filetypes = { "typescript", "typescriptreact", "html" },
+    filetypes = { "typescript", "typescriptreact", "html", "htmlangular" },
     root_markers = { "angular.json", "project.json" },
     workspace_required = true,
 }

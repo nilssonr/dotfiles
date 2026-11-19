@@ -4,6 +4,11 @@
 -- UI preferences, search, timing, indentation, folding, and a custom
 -- statusline with git branch + dirty indicator via gitsigns.
 
+-- Providers not in use (silences :checkhealth vim.provider)
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
+
 -- UI
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -76,6 +81,8 @@ vim.opt.statusline = table.concat({
     "%#StatusLineModified#%m",                           -- modified flag
     "%#StatusLine#%r%h%w",                               -- readonly/help/preview
     "%=",                                                -- right align
+    "%#StatusLine#%{%v:lua.vim.diagnostic.status()%} ",  -- diagnostic counts (0.12)
+    "%{v:lua.vim.ui.progress_status()} ",                -- LSP progress (0.12)
     "%#StatusLineGit#%{v:lua.statusline_git()}",         -- git branch + dirty indicator
     "%#StatusLineSep# │ ",                               -- separator
     "%#StatusLinePos#%l:%c ",                            -- line:col

@@ -16,24 +16,11 @@ require("core.diagnostics").setup()
 -- Plugins (vim.pack.add + lazy loading + config)
 require("core.pack")
 
--- LSP: merge blink.cmp capabilities, disable snippets, then enable servers
-local capabilities = require("blink.cmp").get_lsp_capabilities()
-vim.lsp.config("*", { capabilities = capabilities })
-
--- Enable servers (skip those whose binary isn't on PATH)
-local util = require("core.util")
-local servers = { "gopls", "rust_analyzer", "ts_ls", "angularls", "yamlls", "taplo", "jsonls", "bashls", "lua_ls", "elp" }
-local enabled = {}
-for _, name in ipairs(servers) do
-    local cfg = vim.lsp.config[name]
-    -- angularls uses a function cmd — always include; others check binary
-    if type(cfg) == "table" and type(cfg.cmd) == "table" and cfg.cmd[1] and not util.executable(cfg.cmd[1]) then
-        -- skip
-    else
-        table.insert(enabled, name)
-    end
-end
-vim.lsp.enable(enabled)
+-- LSP: blink.cmp's plugin/blink-cmp.lua merges its capabilities into
+-- vim.lsp.config("*"). vim.lsp.enable() skips any server whose cmd binary
+-- isn't executable when it would start (logged to :LspLog), so no PATH
+-- check is needed here.
+vim.lsp.enable({ "gopls", "rust_analyzer", "ts_ls", "angularls", "yamlls", "taplo", "jsonls", "bashls", "lua_ls", "elp" })
 
 -- Startup screen
 vim.api.nvim_create_autocmd("VimEnter", {
