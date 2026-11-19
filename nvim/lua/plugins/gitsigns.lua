@@ -26,5 +26,5 @@ require("gitsigns").setup({
 })
 
 local gs = require("gitsigns")
-vim.keymap.set("n", "]h", gs.next_hunk, { desc = "Next hunk" })
-vim.keymap.set("n", "[h", gs.prev_hunk, { desc = "Prev hunk" })
+vim.keymap.set("n", "]h", function() gs.nav_hunk("next") end, { desc = "Next hunk" })
+vim.keymap.set("n", "[h", function() gs.nav_hunk("prev") end, { desc = "Prev hunk" })
