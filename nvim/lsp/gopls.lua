@@ -5,6 +5,7 @@
 
 return {
     cmd = { "gopls" },
-    filetypes = { "go", "gomod", "gowork", "gotmpl" },
-    root_markers = { "go.mod", "go.work", ".git" },
+    filetypes = { "go", "gomod", "gowork" },
+    -- go.work first so a parent workspace wins over a module's go.mod
+    root_markers = { "go.work", "go.mod", ".git" },
 }

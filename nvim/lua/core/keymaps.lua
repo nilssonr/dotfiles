@@ -1,9 +1,11 @@
 -- ===============================================================
 -- Keymaps — Global and LSP buffer-local key bindings
 -- ===============================================================
--- 0.12 provides default LSP keymaps: gd (definition), grr (references),
--- gra (code action), grn (rename), gri (implementation), K (hover),
--- <C-S> (signature help). Default diagnostic keymaps: [d/]d, <C-W>d.
+-- 0.12 default LSP keymaps (:h lsp-defaults): gra (code action),
+-- gri (implementation), grn (rename), grr (references), grt (type
+-- definition), grx (run codelens), gO (document symbols), K (hover),
+-- <C-S> (signature help, insert), v_an/v_in (selection range), gx (links).
+-- Go-to-definition is <C-]> via 'tagfunc'. Diagnostics: [d/]d, <C-W>d.
 
 local map = vim.keymap.set
 
@@ -40,12 +42,16 @@ vim.api.nvim_create_autocmd("LspAttach", {
             vim.keymap.set("n", "<leader>lR", "<cmd>Roslyn restart<cr>", { buffer = bufnr, desc = "Restart Roslyn" })
         end
 
-        -- Inlay hints on by default for any server that supports them
-        if client and client:supports_method("textDocument/inlayHint") then
-            vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+        -- Prefer LSP folding when supported; treesitter foldexpr is the default
+        if client and client:supports_method("textDocument/foldingRange") then
+            local win = vim.api.nvim_get_current_win()
+            vim.wo[win][0].foldexpr = "v:lua.vim.lsp.foldexpr()"
         end
     end,
 })
+
+-- Inlay hints on globally (no-op for servers that don't support them)
+vim.lsp.inlay_hint.enable(true)
 
 -- Toggle inlay hints globally
 map("n", "<leader>ci", function()
