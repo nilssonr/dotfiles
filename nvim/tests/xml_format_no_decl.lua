@@ -1,29 +1,24 @@
 local root = vim.fn.getcwd()
-vim.opt.rtp:prepend(root)
+vim.opt.rtp:prepend(root .. "/nvim")
 
 local format = require("core.format")
 
 local ok, err = pcall(function()
-  local buf = vim.api.nvim_create_buf(true, true)
-  vim.api.nvim_set_current_buf(buf)
-  vim.api.nvim_buf_set_name(buf, root .. "/tests/fixture.csproj")
-  vim.bo.filetype = "xml"
-
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+  local out, fmt_err = format.xmllint({
     "<Project>",
     "  <PropertyGroup>",
     "  </PropertyGroup>",
     "</Project>",
   })
+  assert(out, fmt_err)
+  assert(not out[1]:match("^%s*<%?xml"), "xml declaration should not be inserted")
 
-  format.format_current_buffer()
-
-  local out_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-  assert(not out_lines[1]:match("^%s*<%?xml"), "xml declaration should not be inserted")
+  local kept = assert(format.xmllint({ '<?xml version="1.0"?>', "<a><b/></a>" }))
+  assert(kept[1]:match("^%s*<%?xml"), "existing xml declaration should be kept")
 end)
 
 if not ok then
-  vim.api.nvim_err_writeln(err)
+  vim.api.nvim_echo({ { tostring(err) } }, true, { err = true })
   vim.cmd("cq")
 end
 

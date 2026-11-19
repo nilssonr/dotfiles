@@ -1,78 +1,42 @@
 -- ===============================================================
--- Format — Buffer formatting with external tool fallbacks
+-- Format — Single entry point for buffer formatting
 -- ===============================================================
--- XML files use xmllint (LSP formatters don't handle XML well).
--- Erlang files use erlfmt (ELP doesn't support formatting).
--- Everything else falls back to LSP format.
+-- Everything routes through conform (formatter first, LSP fallback).
+-- XML uses the custom "xmllint_nodecl" conform formatter, built on
+-- M.xmllint below; Erlang uses conform's built-in erlfmt.
 
 local M = {}
 
-local function has(cmd)
-    return vim.fn.executable(cmd) == 1
+--- Run xmllint --format on a list of lines. Does not add an XML
+--- declaration when the input had none.
+---@param lines string[]
+---@return string[]|nil new_lines
+---@return string|nil err
+function M.xmllint(lines)
+    if vim.fn.executable("xmllint") ~= 1 then
+        return nil, "xmllint not found on PATH"
+    end
+
+    local input = table.concat(lines, "\n")
+    local has_decl = input:match("^%s*<%?xml") ~= nil
+
+    local result = vim.system({ "xmllint", "--format", "-" }, { stdin = input, text = true }):wait()
+    if result.code ~= 0 then
+        return nil, (result.stderr and result.stderr ~= "") and result.stderr or "xmllint failed"
+    end
+
+    local new_lines = vim.split(result.stdout or "", "\n", { plain = true })
+    if not has_decl and #new_lines > 0 and new_lines[1]:match("^%s*<%?xml") then
+        table.remove(new_lines, 1)
+    end
+    if #new_lines > 0 and new_lines[#new_lines] == "" then
+        table.remove(new_lines, #new_lines)
+    end
+    return new_lines, nil
 end
 
 function M.format_current_buffer()
-    local ft = vim.bo.filetype
-
-    -- XML: use xmllint (LSP formatters don't handle XML well)
-    if ft == "xml" then
-        if not has("xmllint") then
-            vim.notify("xmllint not found on PATH", vim.log.levels.WARN)
-            return
-        end
-
-        local buf = vim.api.nvim_get_current_buf()
-        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-        local input = table.concat(lines, "\n")
-        local has_decl = input:match("^%s*<%?xml") ~= nil
-
-        local result = vim.system({ "xmllint", "--format", "-" }, { stdin = input, text = true }):wait()
-
-        if result.code ~= 0 then
-            local msg = (result.stderr and result.stderr ~= "") and result.stderr or "xmllint failed"
-            vim.notify(msg, vim.log.levels.ERROR)
-            return
-        end
-
-        local out = result.stdout or ""
-        local new_lines = vim.split(out, "\n", { plain = true })
-        -- Don't insert an XML declaration if the original didn't have one
-        if not has_decl and #new_lines > 0 and new_lines[1]:match("^%s*<%?xml") then
-            table.remove(new_lines, 1)
-        end
-        if #new_lines > 0 and new_lines[#new_lines] == "" then
-            table.remove(new_lines, #new_lines)
-        end
-
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, new_lines)
-        return
-    end
-
-    -- Erlang: use erlfmt (ELP doesn't support formatting)
-    if ft == "erlang" then
-        if not has("erlfmt") then
-            vim.notify("erlfmt not found on PATH", vim.log.levels.WARN)
-            return
-        end
-        local buf = vim.api.nvim_get_current_buf()
-        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-        local input = table.concat(lines, "\n")
-        local result = vim.system({ "erlfmt", "-" }, { stdin = input, text = true }):wait()
-        if result.code ~= 0 then
-            local msg = (result.stderr and result.stderr ~= "") and result.stderr or "erlfmt failed"
-            vim.notify(msg, vim.log.levels.ERROR)
-            return
-        end
-        local new_lines = vim.split(result.stdout or "", "\n", { plain = true })
-        if #new_lines > 0 and new_lines[#new_lines] == "" then
-            table.remove(new_lines, #new_lines)
-        end
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, new_lines)
-        return
-    end
-
-    -- Everything else: conform (formatter first, LSP fallback). If conform
-    -- isn't loaded yet, fall back to a direct LSP format.
+    -- conform loads in the deferred group; before that, format via LSP.
     local ok, conform = pcall(require, "conform")
     if ok then
         conform.format({ async = false, timeout_ms = 5000, lsp_format = "fallback" })
