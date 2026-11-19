@@ -23,10 +23,16 @@ require("nvim-treesitter").install({
     "markdown_inline",
 })
 
--- Enable treesitter highlighting and indentation for all filetypes
+-- zsh has no parser of its own; the bash parser covers most of it
+vim.treesitter.language.register("bash", "zsh")
+
+-- Enable treesitter highlighting and indentation for all filetypes.
+-- indentexpr is set per buffer: a global value is overridden by the
+-- runtime indent/*.vim scripts for almost every language.
 vim.api.nvim_create_autocmd("FileType", {
     callback = function(ev)
-        pcall(vim.treesitter.start, ev.buf)
+        if pcall(vim.treesitter.start, ev.buf) then
+            vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
     end,
 })
-vim.o.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"

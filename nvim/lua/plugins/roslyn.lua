@@ -38,7 +38,7 @@ vim.api.nvim_create_autocmd("LspDetach", {
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         if client and client.name == "roslyn" then
             vim.diagnostic.reset(
-                vim.lsp.diagnostic.get_namespace(args.data.client_id, "nil"),
+                vim.lsp.diagnostic.get_namespace(args.data.client_id, true),
                 nil
             )
         end
