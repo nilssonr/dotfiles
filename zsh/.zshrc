@@ -1,46 +1,90 @@
-# Oh My Zsh
+# Keep every PATH/fpath entry once, so nested shells (tmux panes are login
+# shells that inherit PATH and re-run path_helper) don't pile up duplicates.
+typeset -U path fpath
+
 export ZDOTDIR="${ZDOTDIR:-$HOME/.config/zsh}"
 export ZSH="$ZDOTDIR/oh-my-zsh"
+ZSH_CACHE_DIR="$ZSH/cache"
 
-ZSH_THEME="robbyrussell"
-plugins=(git fzf zsh-autosuggestions)
-source "$ZSH/oh-my-zsh.sh"
-
-# Refresh prompt on directory change so git status updates immediately
-setopt PROMPT_SUBST
-
-autoload -Uz add-zsh-hook
-
-function _refresh_prompt_on_chpwd() {
-  if (( $+functions[zle] )); then
-    zle reset-prompt 2>/dev/null || true
-  fi
-}
-add-zsh-hook chpwd _refresh_prompt_on_chpwd
+# History. Not exported: an exported HISTFILE leaks into bash subshells,
+# which then write bash-format history into the zsh file.
+HISTFILE="$ZDOTDIR/.zsh_history"
+HISTSIZE=100000
+SAVEHIST=100000
 
 # Environment / PATH
 export EDITOR=nvim
 export VISUAL=nvim
-
 export PNPM_HOME="$HOME/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-
-export PATH="$HOME/.local/share/bob/nvim-bin:$HOME/.local/bin:$HOME/.dotnet/tools:$PATH"
-
-# Avoid forking `go env` on every shell start
-export PATH="${GOPATH:-$HOME/go}/bin:$PATH"
-
+export BUN_INSTALL="$HOME/.bun"
 # Suppress Corepack interactive download prompt
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
-if command -v fnm >/dev/null 2>&1; then
+# Homebrew llvm comes first on purpose: clang, clang++, clangd and dsymutil
+# resolve to Homebrew's llvm, not Apple's Xcode toolchain.
+# GOPATH default is used directly to avoid forking `go env` on every start.
+path=(
+  "$BUN_INSTALL/bin"
+  /opt/homebrew/opt/llvm/bin(N)
+  "${GOPATH:-$HOME/go}/bin"
+  "$HOME/.local/share/bob/nvim-bin"
+  "$HOME/.local/bin"
+  "$HOME/.dotnet/tools"
+  "$PNPM_HOME"
+  "$HOME/.cargo/bin"
+  $path
+)
+
+# Write a generator command's output to <file>, regenerating it only when
+# <binary> (symlinks resolved) is newer than the file. Sets REPLY to <file>.
+# A failed run leaves <file>.failed so the command isn't retried on every
+# shell start, only after <binary> changes.
+# Usage: _zsh_cache <file> <binary> <cmd...>
+_zsh_cache() {
+  local file=$1 bin=${2:A}
+  shift 2
+  REPLY=$file
+  [[ -s $file && ! $bin -nt $file ]] && return 0
+  [[ -e $file.failed && ! $bin -nt $file.failed ]] && return 1
+  mkdir -p "${file:h}"
+  if "$@" >| "$file.tmp" 2>/dev/null && [[ -s $file.tmp ]]; then
+    mv -f "$file.tmp" "$file"
+    rm -f "$file.failed"
+  else
+    rm -f "$file.tmp"
+    : >| "$file.failed"
+    return 1
+  fi
+}
+
+# fnm: before Oh My Zsh so node-installed tools (codex) are on PATH for the
+# completion generation below.
+if (( $+commands[fnm] )); then
   eval "$(fnm env --use-on-cd --shell zsh)"
 fi
 
-# Prompt — must be AFTER OMZ is sourced, otherwise the theme overrides it
+# Generated completions go into Oh My Zsh's cache completions dir, which it
+# puts on fpath before running compinit.
+if (( $+commands[codex] )); then
+  _zsh_cache "$ZSH_CACHE_DIR/completions/_codex" "$commands[codex]" codex completion zsh
+fi
+
+# Oh My Zsh. ZSH_THEME is empty because PROMPT is set below; this is the
+# only compinit call.
+ZSH_THEME=""
+plugins=(git zsh-autosuggestions)
+source "$ZSH/oh-my-zsh.sh"
+
+# fzf key bindings (Ctrl-R, Ctrl-T, Alt-C) and completion, cached instead of
+# running `fzf --zsh` on every start.
+if (( $+commands[fzf] )) && _zsh_cache "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/fzf.zsh" "$commands[fzf]" fzf --zsh; then
+  source "$REPLY"
+fi
+
+# bun completions
+[[ -s "$BUN_INSTALL/_bun" ]] && source "$BUN_INSTALL/_bun"
+
+# Prompt. git_prompt_info comes from Oh My Zsh's lib/git.zsh.
 ZSH_THEME_GIT_PROMPT_PREFIX='%F{red}('
 ZSH_THEME_GIT_PROMPT_SUFFIX=')%f '
 ZSH_THEME_GIT_PROMPT_DIRTY='%F{yellow}*%f'
@@ -50,64 +94,52 @@ PROMPT='%F{blue}%~%f $(git_prompt_info)› '
 
 # ls colors: directories blue, symlinks cyan, executables green
 export LSCOLORS="exfxcxdxbxegedabagacad"
+zstyle ':completion:*' list-colors 'di=34:ln=36:ex=32'
 
-# Aliases
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
+
+# Aliases. `..` and `...` are left to Oh My Zsh (auto_cd plus its global
+# alias `...` = ../..).
 alias ll='ls -lah'
-alias ..='cd ..'
-alias ...='cd ../..'
 alias lg='lazygit'
 alias k='kubectl'
 alias kx='kubectx'
 alias kns='kubens'
 alias vim='nvim'
 
-# Claude launchers — accept an optional session name as the first positional arg.
-# If the first arg doesn't start with '-', it's treated as a session name.
+# Claude launchers. An optional first arg that doesn't start with '-' is a
+# session name, recorded in OTEL_RESOURCE_ATTRIBUTES.
 # Usage: agent [session-name] [claude-flags...]
 #        poirot [session-name] [claude-flags...]
-function agent() {
-  local otel_attrs="agent=claude"
-  if [[ -n "${1:-}" && "${1}" != -* ]]; then
-    local session_name="${1// /_}"
-    otel_attrs="${otel_attrs},session_name=${session_name}"
+# Internal: _claude_run <otel-agent> [claude-args...] -- [session-name] [flags...]
+_claude_run() {
+  local otel_attrs="agent=$1"
+  shift
+  local -a pre=()
+  while (( $# )) && [[ $1 != -- ]]; do
+    pre+=("$1")
     shift
-  fi
-  OTEL_RESOURCE_ATTRIBUTES="${otel_attrs}" \
-    claude --plugin-dir ~/Code/nilssonr/claude-ops --dangerously-skip-permissions "$@"
-}
-
-function poirot() {
-  local otel_attrs="agent=poirot"
-  if [[ -n "${1:-}" && "${1}" != -* ]]; then
-    local session_name="${1// /_}"
-    otel_attrs="${otel_attrs},session_name=${session_name}"
-    shift
-  fi
-  OTEL_RESOURCE_ATTRIBUTES="${otel_attrs}" \
-    claude --agent claude-ops:hercule-poirot --plugin-dir ~/Code/nilssonr/claude-ops --dangerously-skip-permissions "$@"
-}
-
-# Project picker — lists repos one level under ~/Code/*/
-function _cproj_select() {
-  local -a candidates
-  candidates=()
-
-  local root
-  for root in "$HOME"/Code/*; do
-    [[ -d "$root" ]] || continue
-    while IFS= read -r -d '' dir; do
-      candidates+=("$dir")
-    done < <(find "$root" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null)
   done
+  (( $# )) && shift
+  if [[ -n ${1:-} && $1 != -* ]]; then
+    otel_attrs+=",session_name=${1// /_}"
+    shift
+  fi
+  OTEL_RESOURCE_ATTRIBUTES="$otel_attrs" \
+    claude "${pre[@]}" --plugin-dir ~/Code/nilssonr/claude-ops --dangerously-skip-permissions "$@"
+}
+agent()  { _claude_run claude -- "$@" }
+poirot() { _claude_run poirot --agent claude-ops:hercule-poirot -- "$@" }
 
-  (( ${#candidates[@]} == 0 )) && return 1
-
-  printf '%s\n' "${candidates[@]}" \
-    | sed "s|^$HOME/Code/||" \
+# Project picker: repos one level under ~/Code/*/
+_cproj_select() {
+  local -a dirs=("$HOME"/Code/*/*(N/))
+  (( $#dirs )) || return 1
+  print -rl -- "${dirs[@]#$HOME/Code/}" \
     | fzf --prompt='project> ' --no-sort --tiebreak=index
 }
 
-function cproj() {
+cproj() {
   local selected
   selected="$(_cproj_select)" || return 0
   cd "$HOME/Code/$selected" || return 1
@@ -115,8 +147,9 @@ function cproj() {
 
 alias p='cproj'
 
-# Widget form (Ctrl-P) — updates prompt immediately after cd
-function _cproj_widget() {
+# Widget form, bound to Ctrl-P (replaces the default up-line-or-history).
+# Redraws the prompt after cd so the new directory and git status show.
+_cproj_widget() {
   local selected
   selected="$(_cproj_select)" || { zle reset-prompt; return 0; }
 
@@ -129,13 +162,6 @@ function _cproj_widget() {
 
 zle -N _cproj_widget
 bindkey '^P' _cproj_widget
-
-# Completion
-zmodload -i zsh/complist
-zstyle ':completion:*' list-colors 'di=34:ln=36:ex=32'
-
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
-[ -d /opt/homebrew/opt/llvm ] && export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
 # eqWAlizer JAR for ELP. Without ELP_EQWALIZER_PATH every elp run extracts
 # its embedded ~10 MB jar into $TMPDIR and leaves it there (a day of gates
@@ -175,28 +201,10 @@ PY
   export ELP_EQWALIZER_PATH="$jar"
   echo "eqwalizer jar synced from $elp"
 }
-if (( $+commands[elp] )) && [[ "$HOME/.local/share/eqwalizer.jar" -nt "$(readlink -f "$commands[elp]")" ]]; then
-  export ELP_EQWALIZER_PATH="$HOME/.local/share/eqwalizer.jar"
-elif (( $+commands[elp] )) && [[ -o interactive ]]; then
-  echo "elp: eqwalizer jar missing or older than elp, run elp-eqwalizer-sync" >&2
+if (( $+commands[elp] )); then
+  if [[ "$HOME/.local/share/eqwalizer.jar" -nt "${commands[elp]:A}" ]]; then
+    export ELP_EQWALIZER_PATH="$HOME/.local/share/eqwalizer.jar"
+  else
+    echo "elp: eqwalizer jar missing or older than elp, run elp-eqwalizer-sync" >&2
+  fi
 fi
-
-fpath=("$ZDOTDIR/completions" $fpath)
-autoload -Uz compinit
-compinit
-
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-
-# Ollama — local LLM tuning for agentic (OpenCode) use.
-# Larger context so agent sessions don't silently truncate; q8_0 KV cache
-# (requires flash attention) halves KV memory; a single slot gives the whole
-# context to one request; keep the model resident to avoid cold reloads.
-export OLLAMA_FLASH_ATTENTION=1
-export OLLAMA_KV_CACHE_TYPE=q8_0
-export OLLAMA_NUM_PARALLEL=1
-export OLLAMA_KEEP_ALIVE=24h
-export OLLAMA_CONTEXT_LENGTH=32768
